@@ -1,0 +1,46 @@
+name: subd CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  black:
+    name: Check black formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout master
+        uses: actions/checkout@master
+
+      - name: setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
+      - name: install test dependecies
+        run: pip install -r requirements.txt
+
+      - name: black checking
+        run: black --check --config pyproject.toml .
+
+  flake:
+    name: Check flake formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout master
+        uses: actions/checkout@master
+
+      - name: setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+      
+      - name: install test dependecies
+        run: pip install -r requirements/test.txt
+
+      - name: flake linting
+        run: flake8 --verbose --config setup.cfg .
