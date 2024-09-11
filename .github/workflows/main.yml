@@ -40,7 +40,7 @@ jobs:
           architecture: 'x64'
       
       - name: install test dependecies
-        run: pip install -r requirements/test.txt
+        run: pip install -r requirements.txt
 
       - name: flake linting
         run: flake8 --verbose --config setup.cfg .
