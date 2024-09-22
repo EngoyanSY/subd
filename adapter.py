@@ -4,25 +4,25 @@ import sqlite3
 import pandas as pd
 
 
-class con_excel:
+class ConExcel:
     DB = None
 
     def __init__(self, name):
         self.DB = pd.read_excel(os.path.join("DB", name))
 
     def print_head(self):
-        return print(self.DB.head())
+        print(self.DB.head())
 
     def print_db(self):
-        return print(self.DB)
+        print(self.DB)
 
 
-class db_sql(con_excel):
+class TableSQL(ConExcel):
     columns_name = None
     database_name = None
 
     def __init__(self, name):
-        super(db_sql, self).__init__(name)
+        super().__init__(name)
         self.DB = self.DB.rename(columns=dict(zip(self.DB.columns, self.columns_name)))
 
     def create_table(self):
@@ -30,7 +30,7 @@ class db_sql(con_excel):
         self.DB.to_sql(self.database_name, con, if_exists="replace", index=False)
 
 
-class db_VUZ(db_sql):
+class TableVUZ(TableSQL):
     columns_name = [
         "UniqueID",
         "code",
@@ -48,11 +48,8 @@ class db_VUZ(db_sql):
 
     database_name = "vuz"
 
-    def __init__(self, name):
-        super(db_VUZ, self).__init__(name)
 
-
-class db_NTP(db_sql):
+class TableNTP(TableSQL):
     columns_name = [
         "UniqueID",
         "ntp_code",
@@ -69,11 +66,8 @@ class db_NTP(db_sql):
 
     database_name = "nir_ntp"
 
-    def __init__(self, name):
-        super(db_NTP, self).__init__(name)
 
-
-class db_Gr(db_sql):
+class TableGr(TableSQL):
     columns_name = [
         "UniqueID",
         "nir_code",
@@ -91,11 +85,8 @@ class db_Gr(db_sql):
 
     database_name = "nir_grant"
 
-    def __init__(self, name):
-        super(db_Gr, self).__init__(name)
 
-
-class db_Tp(db_sql):
+class TableTp(TableSQL):
     columns_name = [
         "UniqueID",
         "vuz_code",
@@ -111,17 +102,17 @@ class db_Tp(db_sql):
 
     database_name = "nir_templan"
 
-    def __init__(self, name):
-        super(db_Tp, self).__init__(name)
-
 
 def create_database():
-    VUZ = db_VUZ("Vuz.xlsx")
-    NTP = db_NTP("Ntp_pr.xlsx")
-    GR = db_Gr("Gr_pr.xlsx")
-    TP = db_Tp("Tp_pr.xlsx")
+    vuz = TableVUZ("Vuz.xlsx")
+    ntp = TableNTP("Ntp_pr.xlsx")
+    gr = TableGr("Gr_pr.xlsx")
+    tp = TableTp("Tp_pr.xlsx")
 
-    VUZ.create_table()
-    NTP.create_table()
-    GR.create_table()
-    TP.create_table()
+    vuz.create_table()
+    ntp.create_table()
+    gr.create_table()
+    tp.create_table()
+
+
+create_database()
