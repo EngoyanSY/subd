@@ -1,8 +1,8 @@
-PyQt6==6.4.2
-pyqt6-tools==6.4.2.3.3
-
+flake8==7.1.1
 black==24.8.0
-flake8==5.0.4
 
 pandas==2.2.3
 openpyxl==3.1.5
+
+PyQt6==6.4.2
+pyqt6-tools==6.4.2.3.3

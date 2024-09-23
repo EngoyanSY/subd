@@ -2,7 +2,7 @@ name: subd CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "peter" ]
   pull_request:
     branches: [ "master" ]
 
@@ -17,7 +17,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v1
         with:
-          python-version: '3.8'
+          python-version: '3.9'
           architecture: 'x64'
 
       - name: install test dependecies
@@ -36,7 +36,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v1
         with:
-          python-version: '3.8'
+          python-version: '3.9'
           architecture: 'x64'
       
       - name: install test dependecies
