@@ -39,7 +39,7 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(parent=self.tab_1)
         font = QtGui.QFont()
         font.setPointSize(10)
-        font.setBold(True)
+        font.setBold(False)
         font.setKerning(True)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")

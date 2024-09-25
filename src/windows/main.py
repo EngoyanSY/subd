@@ -1,3 +1,4 @@
+from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
 
@@ -13,6 +14,10 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_actions()
+        self.db = self.connect_database()
+
+        if self.db:
+            self.setup_table_models()
 
     def setup_actions(self):
         analytic_action = QAction("Аналитика", self)
@@ -27,9 +32,33 @@ class MainWindow(QMainWindow):
         export_action.triggered.connect(self.open_export)
         self.ui.export_2.addAction(export_action)
 
+    def connect_database(self):
+        db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
+        db.setDatabaseName("DB/DataBase.sqlite")
+
+        if not db.open():
+            raise Exception("Не удалось подключиться к базе данных.")
+
+        return db
+
+    def setup_table_models(self):
+        self.table_vuz = self.create_table_model("vuz", self.ui.tableView)
+        self.table_grant = self.create_table_model("nir_grant", self.ui.tableView_2)
+        self.table_ntp = self.create_table_model("nir_ntp", self.ui.tableView_3)
+        self.table_templan = self.create_table_model(
+            "nir_templan", self.ui.tableView_4
+        )
+
+    def create_table_model(self, table_name, table_view):
+        model = QtSql.QSqlTableModel()
+        model.setTable(table_name)
+        model.select()
+        table_view.setModel(model)
+        return model
+
     def open_analytics(self):
-        self.analitycs_window = AnalyticsDialog()
-        self.analitycs_window.show()
+        self.analytics_window = AnalyticsDialog()
+        self.analytics_window.show()
 
     def open_about(self):
         self.about_window = AboutDialog()
