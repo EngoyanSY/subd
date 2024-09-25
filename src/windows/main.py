@@ -1,7 +1,6 @@
 from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
-import logging
 
 from src.windows.analytics import AnalyticsDialog
 from src.windows.about import AboutDialog
@@ -15,10 +14,10 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_actions()
-        self.db = self.connect_database()  
+        self.db = self.connect_database()
 
         if self.db:
-            self.setup_table_models()  
+            self.setup_table_models()
 
     def setup_actions(self):
         analytic_action = QAction("Аналитика", self)
@@ -38,15 +37,17 @@ class MainWindow(QMainWindow):
         db.setDatabaseName("DB/DataBase.sqlite")
 
         if not db.open():
-            logging.error("Не удалось подключиться к базе данных.")
-            return False
-        return db  
+            raise Exception("Не удалось подключиться к базе данных.")
+
+        return db
 
     def setup_table_models(self):
-        self.table1 = self.create_table_model("vuz", self.ui.tableView)
-        self.table2 = self.create_table_model("nir_grant", self.ui.tableView_2)
-        self.table3 = self.create_table_model("nir_ntp", self.ui.tableView_3)
-        self.table4 = self.create_table_model("nir_templan", self.ui.tableView_4)
+        self.table_vuz = self.create_table_model("vuz", self.ui.tableView)
+        self.table_grant = self.create_table_model("nir_grant", self.ui.tableView_2)
+        self.table_ntp = self.create_table_model("nir_ntp", self.ui.tableView_3)
+        self.table_templan = self.create_table_model(
+            "nir_templan", self.ui.tableView_4
+        )
 
     def create_table_model(self, table_name, table_view):
         model = QtSql.QSqlTableModel()
@@ -66,5 +67,3 @@ class MainWindow(QMainWindow):
     def open_export(self):
         self.export_window = ExportDialog()
         self.export_window.show()
-
-    
