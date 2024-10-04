@@ -114,6 +114,3 @@ def create_database():
     gr.create_table()
     tp.create_table()
 
-
-if __name__ == "__main__":
-    create_database()

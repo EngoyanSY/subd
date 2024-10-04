@@ -16,13 +16,13 @@ def create_table(model: BaseModel, table: Table):
     data = data.rename(columns=dict(zip(data.columns, list(model.model_fields))))
     data.replace({np.nan: None}, inplace=True)
     engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-    for r in range(data.shape[0]):
-        ntp = model.model_validate(data.iloc[r].to_dict())
-        with Session(engine) as session:
+    with Session(engine) as session:
+        for r in range(data.shape[0]):
+            ntp = model.model_validate(data.iloc[r].to_dict())
             stmt = insert(table).values(ntp.dict())
             session.execute(stmt)
-            session.commit()
-            session.close()
+        session.commit()
+        session.close()
 
 
 class Nir_Grant(BaseModel):
@@ -40,6 +40,8 @@ class Nir_Grant(BaseModel):
     director_academic_degree: Optional[str] = Field(default=None)
     table_name: ClassVar[str] = "Gr_pr.xlsx"
 
+    #Имена столобцов на русском
+    
     @validator("grnti_code", pre=True)
     def validate_grnti_code(cls, value):
         if isinstance(value, str):
