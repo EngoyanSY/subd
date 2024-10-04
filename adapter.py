@@ -113,4 +113,3 @@ def create_database():
     ntp.create_table()
     gr.create_table()
     tp.create_table()
-

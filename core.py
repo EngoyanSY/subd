@@ -17,7 +17,7 @@ from models import (
 
 
 def create_sql_tables():
-    if not(isfile('DB/DataBase.sqlite')):
+    if not (isfile("DB/DataBase.sqlite")):
         engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
         metadata_obj.drop_all(engine)
         metadata_obj.create_all(engine)
@@ -25,4 +25,3 @@ def create_sql_tables():
         create_table(Nir_Grant, Grant)
         create_table(Nir_Templan, Templan)
         create_table(Nir_VUZ, VUZ)
-

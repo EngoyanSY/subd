@@ -40,8 +40,8 @@ class Nir_Grant(BaseModel):
     director_academic_degree: Optional[str] = Field(default=None)
     table_name: ClassVar[str] = "Gr_pr.xlsx"
 
-    #Имена столобцов на русском
-    
+    # Имена столобцов на русском
+
     @validator("grnti_code", pre=True)
     def validate_grnti_code(cls, value):
         if isinstance(value, str):
