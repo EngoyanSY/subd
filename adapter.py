@@ -113,7 +113,3 @@ def create_database():
     ntp.create_table()
     gr.create_table()
     tp.create_table()
-
-
-if __name__ == "__main__":
-    create_database()
