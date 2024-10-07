@@ -1,4 +1,3 @@
-from typing import Optional, ClassVar
 import os
 
 from pydantic import BaseModel, Field, validator
@@ -123,93 +122,6 @@ def create_pivot(Grant: Table, Ntp: Table, Templan: Table, Pivot: Table):
 
         session.execute(insert_stmt)
         session.commit()
-
-
-class Nir_Grant(BaseModel):
-    UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
-    nir_code: int = Field()
-    kon_code: int = Field()
-    grnti_code: Optional[str] = Field(default=None)
-    vuz_code: int = Field()
-    vuz_name: Optional[str] = Field(default=None)
-    grant_value: int = Field()
-    nir_director: str = Field()
-    director_position: Optional[str] = Field(default=None)
-    director_academic_title: Optional[str] = Field(default=None)
-    director_academic_degree: Optional[str] = Field(default=None)
-    nir_name: str = Field()
-    table_name: ClassVar[str] = "Gr_pr.xlsx"
-
-    # Имена столобцов на русском
-
-    @validator("grnti_code", pre=True)
-    def validate_grnti_code(cls, value):
-        if isinstance(value, str):
-            return value
-        return None
-
-
-class Nir_NTP(BaseModel):
-    UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
-    ntp_code: int = Field()
-    nir_number: int = Field()
-    grnti_code: Optional[str] = Field(default=None)
-    vuz_code: int = Field()
-    vuz_name: Optional[str] = Field(default=None)
-    year_value_plan: int = Field()
-    nir_director: str = Field()
-    director_meta: str = Field()
-    nir_type: str = Field()
-    nir_name: str = Field()
-    table_name: ClassVar[str] = "Ntp_pr.xlsx"
-
-    @validator("grnti_code", pre=True)
-    def validate_grnti_code(cls, value):
-        if isinstance(value, str):
-            return value
-        return None
-
-
-class Nir_Templan(BaseModel):
-    UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
-    grnti_code: Optional[str] = Field(default=None)
-    vuz_code: int = Field()
-    vuz_name: Optional[str] = Field(default=None)
-    value_plan: int = Field()
-    nir_director: str = Field()
-    director_position: str = Field()
-    nir_type: str = Field()
-    nir_reg_number: str = Field()
-    nir_name: str = Field()
-    table_name: ClassVar[str] = "Tp_pr.xlsx"
-
-    @validator("grnti_code", pre=True)
-    def validate_grnti_code(cls, value):
-        if isinstance(value, str):
-            return value
-        return None
-
-    @validator("nir_reg_number", pre=True)
-    def validate_nir_reg_number(cls, value):
-        if isinstance(value, str):
-            return value
-        return str(value)
-
-
-class Nir_VUZ(BaseModel):
-    UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
-    vuz_code: int = Field()
-    vuz_name: Optional[str] = Field(default=None)
-    status: str = Field()
-    fed_sub_code: int = Field()
-    federation_subject: str = Field()
-    region: str = Field()
-    city: str = Field()
-    name: str = Field()
-    full_name: str = Field()
-    gr_ved: Optional[str] = Field(default=None)
-    profile: Optional[str] = Field(default=None)
-    table_name: ClassVar[str] = "VUZ.xlsx"
 
 
 metadata_obj = MetaData()
