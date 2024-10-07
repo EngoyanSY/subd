@@ -2,6 +2,7 @@ from typing import Optional, ClassVar
 
 from pydantic import BaseModel, Field, validator
 
+
 class Nir_Grant(BaseModel):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
     nir_code: int = Field()
@@ -16,8 +17,6 @@ class Nir_Grant(BaseModel):
     director_academic_degree: Optional[str] = Field(default=None)
     nir_name: str = Field()
     table_name: ClassVar[str] = "Gr_pr.xlsx"
-
-    # Имена столобцов на русском
 
     @validator("grnti_code", pre=True)
     def validate_grnti_code(cls, value):
