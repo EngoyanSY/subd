@@ -9,28 +9,61 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1282</width>
-    <height>862</height>
+    <width>1042</width>
+    <height>757</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="accessibleDescription">
+       <string notr="true"/>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
+      </property>
+      <property name="movable">
+       <bool>false</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
       </property>
       <widget class="QWidget" name="tab_1">
        <property name="autoFillBackground">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <attribute name="title">
-        <string>Таблица1</string>
+        <string>ВУЗы</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Поиск</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="0">
          <widget class="QLineEdit" name="lineEdit_2">
           <property name="sizePolicy">
@@ -47,28 +80,27 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <bold>true</bold>
-            <kerning>true</kerning>
-           </font>
+        <item row="2" column="0">
+         <widget class="QTableView" name="tableView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="text">
-           <string>Поиск</string>
+          <property name="autoFillBackground">
+           <bool>false</bool>
           </property>
          </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QTableView" name="tableView"/>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
-        <string>Таблица 2</string>
+        <string>Гранты</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="1" column="0">
@@ -92,16 +124,27 @@
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Поиск</string>
           </property>
          </widget>
         </item>
        </layout>
+       <zorder>lineEdit_3</zorder>
+       <zorder>label_3</zorder>
+       <zorder>tableView_2</zorder>
       </widget>
       <widget class="QWidget" name="tab_3">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
-        <string>Таблица 3</string>
+        <string>НТП</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="1" column="0">
@@ -122,6 +165,11 @@
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Поиск</string>
           </property>
@@ -130,12 +178,20 @@
        </layout>
       </widget>
       <widget class="QWidget" name="tab_4">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <attribute name="title">
-        <string>Таблица 4</string>
+        <string>Тем. планы</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
          <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Поиск </string>
           </property>
@@ -184,8 +240,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1282</width>
-     <height>22</height>
+     <width>1042</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -199,11 +255,6 @@
      <string>Данные</string>
     </property>
    </widget>
-   <widget class="QMenu" name="analytics">
-    <property name="title">
-     <string>Анализ</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="export_2">
     <property name="title">
      <string>Отчёты</string>
@@ -215,7 +266,6 @@
     </property>
    </widget>
    <addaction name="main_data"/>
-   <addaction name="analytics"/>
    <addaction name="export_2"/>
    <addaction name="about"/>
   </widget>
