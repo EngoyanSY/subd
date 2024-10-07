@@ -46,9 +46,16 @@ class MainWindow(QMainWindow):
         self.table_vuz = self.create_table_model("vuz", self.ui.tableView)
         self.table_grant = self.create_table_model("nir_grant", self.ui.tableView_2)
         self.table_ntp = self.create_table_model("nir_ntp", self.ui.tableView_3)
-        self.table_templan = self.create_table_model("nir_templan", self.ui.tableView_4)
+        self.table_templan = self.create_table_model(
+            "nir_templan", self.ui.tableView_4
+        )
 
-        for table_view in [self.ui.tableView, self.ui.tableView_2, self.ui.tableView_3, self.ui.tableView_4]:
+        for table_view in [
+            self.ui.tableView,
+            self.ui.tableView_2,
+            self.ui.tableView_3,
+            self.ui.tableView_4,
+        ]:
             table_view.resizeColumnsToContents()
 
     def create_table_model(self, table_name, table_view):
@@ -59,15 +66,20 @@ class MainWindow(QMainWindow):
         table_view.setModel(model)
         table_view.setEditTriggers(table_view.EditTrigger.NoEditTriggers)
         return model
-    
+
     def setup_sorting(self):
         self.current_sort_column = None
         self.current_sort_order = Qt.SortOrder.DescendingOrder
 
-        for table_view in [self.ui.tableView, self.ui.tableView_2, self.ui.tableView_3, self.ui.tableView_4]:
+        for table_view in [
+            self.ui.tableView,
+            self.ui.tableView_2,
+            self.ui.tableView_3,
+            self.ui.tableView_4,
+        ]:
             header = table_view.horizontalHeader()
-            header.setSectionsClickable(True)  
-            header.sectionClicked.connect(self.sort_table)  
+            header.setSectionsClickable(True)
+            header.sectionClicked.connect(self.sort_table)
 
     def sort_table(self, index):
         table_view = self.sender().parent()
@@ -75,14 +87,15 @@ class MainWindow(QMainWindow):
 
         if self.current_sort_column == index:
             self.current_sort_order = (
-                Qt.SortOrder.DescendingOrder if self.current_sort_order == Qt.SortOrder.AscendingOrder else Qt.SortOrder.AscendingOrder
+                Qt.SortOrder.DescendingOrder
+                if self.current_sort_order == Qt.SortOrder.AscendingOrder
+                else Qt.SortOrder.AscendingOrder
             )
         else:
             self.current_sort_column = index
             self.current_sort_order = Qt.SortOrder.DescendingOrder
 
         model.sort(self.current_sort_column, self.current_sort_order)
-    
 
     def open_about(self):
         self.about_window = AboutDialog()
