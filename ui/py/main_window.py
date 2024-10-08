@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'qt/mainWindow.ui'
+# Form implementation generated from reading ui file 'ui/qt/mainWindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -133,6 +133,28 @@ class Ui_MainWindow(object):
         self.lineEdit.setObjectName("lineEdit")
         self.gridLayout_5.addWidget(self.lineEdit, 1, 0, 1, 2)
         self.tabWidget.addTab(self.tab_4, "")
+        self.tab_5 = QtWidgets.QWidget()
+        self.tab_5.setObjectName("tab_5")
+        self.gridLayout_14 = QtWidgets.QGridLayout(self.tab_5)
+        self.gridLayout_14.setObjectName("gridLayout_14")
+        self.label_13 = QtWidgets.QLabel(parent=self.tab_5)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label_13.setFont(font)
+        self.label_13.setObjectName("label_13")
+        self.gridLayout_14.addWidget(self.label_13, 0, 0, 1, 1)
+        self.lineEdit_13 = QtWidgets.QLineEdit(parent=self.tab_5)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEdit_13.sizePolicy().hasHeightForWidth())
+        self.lineEdit_13.setSizePolicy(sizePolicy)
+        self.lineEdit_13.setObjectName("lineEdit_13")
+        self.gridLayout_14.addWidget(self.lineEdit_13, 1, 0, 1, 1)
+        self.tableView_13 = QtWidgets.QTableView(parent=self.tab_5)
+        self.tableView_13.setObjectName("tableView_13")
+        self.gridLayout_14.addWidget(self.tableView_13, 2, 0, 1, 1)
+        self.tabWidget.addTab(self.tab_5, "")
         self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
@@ -140,7 +162,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
         self.menubar.setEnabled(True)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1042, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1042, 21))
         self.menubar.setDefaultUp(True)
         self.menubar.setNativeMenuBar(False)
         self.menubar.setObjectName("menubar")
@@ -156,7 +178,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.about.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -174,6 +196,9 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Поиск "))
         self.lineEdit.setPlaceholderText(_translate("MainWindow", "Введите текст"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("MainWindow", "Тем. планы"))
+        self.label_13.setText(_translate("MainWindow", "Поиск"))
+        self.lineEdit_13.setPlaceholderText(_translate("MainWindow", "Введите текст"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), _translate("MainWindow", "Сводка"))
         self.main_data.setTitle(_translate("MainWindow", "Данные"))
         self.export_2.setTitle(_translate("MainWindow", "Отчёты"))
         self.about.setTitle(_translate("MainWindow", "О программе"))
