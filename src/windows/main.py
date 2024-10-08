@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         self.setup_sorting()
-    
+
     @property
     def vuz_column_names(self):
         return {
@@ -142,7 +142,6 @@ class MainWindow(QMainWindow):
             if col_index != -1:
                 qt_table.setHeaderData(col_index, Qt.Orientation.Horizontal, new_name)
 
-
     def setup_table_models(self):
         self.table_vuz = self.create_table_model("vuz", self.ui.tableView)
         self.table_grant = self.create_table_model("nir_grant", self.ui.tableView_2)
@@ -159,7 +158,7 @@ class MainWindow(QMainWindow):
         qt_table.select()
 
         column_index = qt_table.fieldIndex("UniqueID")
-        
+
         header = table_view.horizontalHeader()
         header.setSectionsClickable(True)
         header.sectionClicked.connect(self.sort_table)
@@ -180,7 +179,6 @@ class MainWindow(QMainWindow):
     def setup_sorting(self):
         self.current_sort_column = None
         self.current_sort_order = Qt.SortOrder.DescendingOrder
-
 
     def sort_table(self, index):
         table_view = self.sender().parent()
