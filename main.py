@@ -9,7 +9,7 @@ from core import create_sql_tables
 if __name__ == "__main__":
 
     create_sql_tables()
-
+    
     app = QApplication(sys.argv)
 
     window = MainWindow()

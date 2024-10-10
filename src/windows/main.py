@@ -2,11 +2,14 @@ from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
 
 from src.windows.about import AboutDialog
 from src.windows.export import ExportDialog
 from ui.py.main_window import Ui_MainWindow
 from ..alignDelegate import AlignDelegate
+from models import VUZ, Grant, NTP, Templan, create_pivot
 
 
 class MainWindow(QMainWindow):
@@ -24,6 +27,9 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         self.setup_sorting()
+        self.vuz_filter_cond = {}
+        self.grnti_filter_cond = {}
+        self.setupFilters()
 
     @property
     def vuz_column_names(self):
@@ -113,6 +119,9 @@ class MainWindow(QMainWindow):
         export_action = QAction("Экспорт", self)
         export_action.triggered.connect(self.open_export)
         self.ui.export_2.addAction(export_action)
+        
+        self.ui.set_filter.clicked.connect(self.set_filters)
+        self.ui.clear_filter.clicked.connect(self.clear_filters)
 
     def connect_database(self):
         db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
@@ -122,6 +131,34 @@ class MainWindow(QMainWindow):
             raise Exception("Не удалось подключиться к базе данных.")
 
         return db
+
+    def set_filters(self):
+        vuz_name = self.ui.vuz.currentText()
+        if self.ui.vuz.currentIndex() != -1:
+            self.vuz_filter_cond["vuz_name"] = vuz_name
+            self.grnti_filter_cond["vuz_name"] = vuz_name
+        vuz_city = self.ui.city.currentText()
+        if self.ui.city.currentIndex() != -1:
+            self.vuz_filter_cond["city"] = vuz_city
+            self.grnti_filter_cond["city"] = vuz_city
+        vuz_fed_sub = self.ui.subject.currentText()
+        if self.ui.subject.currentIndex() != -1:
+            self.vuz_filter_cond["federation_subject"] = vuz_fed_sub
+            self.grnti_filter_cond["federation_subject"] = vuz_fed_sub
+        vuz_region = self.ui.obl.currentText()
+        if self.ui.obl.currentIndex() != -1:
+            self.vuz_filter_cond["region"] = vuz_region
+            self.grnti_filter_cond["region"] = vuz_region
+        grnti_code = self.ui.grnti_code.currentText()
+        # if self.ui.grnti_code.currentIndex() != -1:
+        #     self.grnti_filter_cond["grnti_code"] = grnti_code
+        self.setupFilters(self.vuz_filter_cond, self.grnti_filter_cond)
+
+
+    def clear_filters(self):
+        self.vuz_filter_cond = {}
+        self.grnti_filter_cond = {}
+        self.setupFilters(self.vuz_filter_cond, self.grnti_filter_cond)
 
     def get_column_names(self, table_name):
         table_column_properties = {
@@ -161,6 +198,7 @@ class MainWindow(QMainWindow):
 
         header = table_view.horizontalHeader()
         header.setSectionsClickable(True)
+        header.setSortIndicatorShown(True)
         header.sectionClicked.connect(self.sort_table)
 
         if column_index != -1:
@@ -179,6 +217,67 @@ class MainWindow(QMainWindow):
     def setup_sorting(self):
         self.current_sort_column = None
         self.current_sort_order = Qt.SortOrder.DescendingOrder
+
+    def setupFilters(self, filters_vuz=None, filters_grnti=None):
+        engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
+        with Session(engine) as session:
+            vuz_names = session.scalars(VUZ().get_all_vuz_names(filter_cond=filters_vuz)).all()
+            vuz_cities = session.scalars(VUZ().get_all_vuz_cities(filter_cond=filters_vuz)).all()
+            vuz_regions = session.scalars(VUZ().get_all_vuz_region(filter_cond=filters_vuz)).all()
+            vuz_fed_sub = session.scalars(VUZ().get_all_vuz_fed_sub(filter_cond=filters_vuz)).all()
+            grnti_codes = session.scalars(NTP().get_grnti_codes(filter_cond=filters_grnti)).all() + \
+                session.scalars(Grant().get_grnti_codes(filter_cond=filters_grnti)).all() + \
+                session.scalars(Templan().get_grnti_codes(filter_cond=filters_grnti)).all()
+        
+        grnti_codes_clean = set()
+        for code in grnti_codes:
+            if code and code != "???":
+                splitter = ""
+                if ":" in code:
+                    splitter = ":"
+                elif "," in code:
+                    splitter = ","
+                elif ";" in code:
+                    splitter = ";"
+                elif " " in code:
+                    splitter = " "
+                if splitter:
+                    a, b = code.split(splitter)
+                    grnti_codes_clean.add(a.strip())
+                    grnti_codes_clean.add(b.strip())
+                else:
+                    grnti_codes_clean.add(code.strip())
+        self.ui.vuz.clear()
+        self.ui.vuz.addItems(vuz_names)
+        self.ui.city.clear()
+        self.ui.city.addItems(vuz_cities)
+        self.ui.obl.clear()
+        self.ui.obl.addItems(vuz_regions)
+        self.ui.subject.clear()
+        self.ui.subject.addItems(vuz_fed_sub)
+        self.ui.grnti_code.clear()
+        self.ui.grnti_code.addItems(sorted(list(grnti_codes_clean)))
+        if filters_vuz is not None:
+            self.ui.vuz.setCurrentText(filters_vuz["vuz_name"] if "vuz_name" in filters_vuz else "ВУЗ")
+            self.ui.city.setCurrentText(filters_vuz["city"] if "city" in filters_vuz else "Город")
+            self.ui.obl.setCurrentText(filters_vuz["region"] if "region" in filters_vuz else "Регион")
+            self.ui.subject.setCurrentText(filters_vuz["federation_subject"] if "federation_subject" in filters_vuz else "Субъект Федерации")
+            filter_1 = " AND ".join(list(map(lambda x: f"{x[0]}='{x[1]}'", filters_vuz.items())))
+            self.ui.tableView.model().setFilter(filter_1)
+            self.ui.tableView.model().select()
+        if filters_grnti is not None:
+            self.ui.grnti_code.setCurrentText(filters_grnti["grnti_code"] if "grnti_code" in filters_grnti else "Код ГРНТИ")
+        filter_2 = " OR ".join(list(map(lambda x: f"vuz_name='{x}'", vuz_names)))
+        self.ui.tableView_2.model().setFilter(filter_2)
+        self.ui.tableView_2.model().select()
+        self.ui.tableView_3.model().setFilter(filter_2)
+        self.ui.tableView_3.model().select()
+        self.ui.tableView_4.model().setFilter(filter_2)
+        self.ui.tableView_4.model().select()
+        self.ui.tableView_13.model().setFilter(filter_2)
+        self.ui.tableView_13.model().select()
+            
+            
 
     def sort_table(self, index):
         table_view = self.sender().parent()

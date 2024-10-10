@@ -1,3 +1,4 @@
+from typing import Optional, Dict
 import os
 import numpy as np
 
@@ -143,7 +144,12 @@ class Grant(BaseTabel):
             literal_column("0").label("nir_templan_count"),
             literal_column("0").label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
-
+    
+    def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.grnti_code).join(VUZ, VUZ.vuz_code == self.__table__.c.vuz_code, isouter=True)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        return q.order_by(self.__table__.c.grnti_code).distinct()
 
 class NTP(BaseTabel):
     _schema = Nir_NTP
@@ -174,6 +180,13 @@ class NTP(BaseTabel):
             literal_column("0").label("nir_templan_count"),
             literal_column("0").label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
+    
+    def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.grnti_code).join(VUZ, VUZ.vuz_code == self.__table__.c.vuz_code)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+            print(q)
+        return q.order_by(self.__table__.c.grnti_code).distinct()
 
 
 class Templan(BaseTabel):
@@ -204,6 +217,13 @@ class Templan(BaseTabel):
             func.count(self.__table__.c.nir_reg_number).label("nir_templan_count"),
             func.sum(self.__table__.c.value_plan).label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
+    
+    def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.grnti_code).join(VUZ, VUZ.vuz_code == self.__table__.c.vuz_code, isouter=True)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        print(q)
+        return q.order_by(self.__table__.c.grnti_code).distinct()
 
 
 class VUZ(BaseTabel):
@@ -224,6 +244,30 @@ class VUZ(BaseTabel):
         Column("gr_ved", String),
         Column("profile", String),
     )
+
+    def get_all_vuz_names(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.vuz_name)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        return q.order_by(self.__table__.c.vuz_name).distinct()
+
+    def get_all_vuz_cities(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.city)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        return q.order_by(self.__table__.c.city).distinct()
+
+    def get_all_vuz_fed_sub(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.federation_subject)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        return q.order_by(self.__table__.c.federation_subject).distinct()
+    
+    def get_all_vuz_region(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.region)
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        return q.order_by(self.__table__.c.region).distinct()
 
 
 class Pivot(BaseModel):
