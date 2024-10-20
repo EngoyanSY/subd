@@ -5,17 +5,17 @@ from pydantic import BaseModel, Field, validator
 
 class Nir_Grant(BaseModel):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
-    nir_code: int = Field()
     kon_code: int = Field()
+    nir_code: int = Field()
     vuz_code: int = Field()
     vuz_name: Optional[str] = Field(default=None)
     grnti_code: Optional[str] = Field(default=None)
     grant_value: int = Field()
     nir_director: str = Field()
+    nir_name: str = Field()
     director_position: Optional[str] = Field(default=None)
     director_academic_title: Optional[str] = Field(default=None)
     director_academic_degree: Optional[str] = Field(default=None)
-    nir_name: str = Field()
     table_name: ClassVar[str] = "Gr_pr.xlsx"
 
     @validator("grnti_code", pre=True)
@@ -34,9 +34,9 @@ class Nir_NTP(BaseModel):
     grnti_code: Optional[str] = Field(default=None)
     year_value_plan: int = Field()
     nir_director: str = Field()
-    director_meta: str = Field()
     nir_type: str = Field()
     nir_name: str = Field()
+    director_meta: str = Field()
     table_name: ClassVar[str] = "Ntp_pr.xlsx"
 
     @validator("grnti_code", pre=True)
@@ -53,10 +53,10 @@ class Nir_Templan(BaseModel):
     grnti_code: Optional[str] = Field(default=None)
     value_plan: int = Field()
     nir_director: str = Field()
-    director_position: str = Field()
     nir_type: str = Field()
     nir_reg_number: str = Field()
     nir_name: str = Field()
+    director_position: str = Field()
     table_name: ClassVar[str] = "Tp_pr.xlsx"
 
     @validator("grnti_code", pre=True)
