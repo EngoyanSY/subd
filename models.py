@@ -17,7 +17,6 @@ from sqlalchemy import (
     literal_column,
 )
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Session
 import pandas as pd
 
 from schema import (
@@ -26,6 +25,7 @@ from schema import (
     Nir_Templan,
     Nir_VUZ,
 )
+from core import Session
 
 
 def create_pivot(Grant, Ntp, Templan, Pivot):
@@ -92,7 +92,28 @@ def create_pivot(Grant, Ntp, Templan, Pivot):
 metadata_obj = MetaData()
 
 
-class BaseTabel(DeclarativeBase):
+def create_sql_tables():
+    if not (os.path.isfile("DB/DataBase.sqlite")):
+        engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
+        metadata_obj.drop_all(engine)
+        metadata_obj.create_all(engine)
+        gr_table = Grant()
+        ntp_table = NTP()
+        tp_table = Templan()
+        vuz_table = VUZ()
+        pivot_table = Pivot()
+        gr_table.create_table()
+        ntp_table.create_table()
+        tp_table.create_table()
+        vuz_table.create_table()
+
+        create_pivot(gr_table, ntp_table, tp_table, pivot_table)
+        print("База данных DataBase.sqlite создана и подключена")
+    else:
+        print("База данных DataBase.sqlite подключена")
+
+
+class BaseTable(DeclarativeBase):
     _schema = BaseModel
 
     def create_table(self):
@@ -104,17 +125,25 @@ class BaseTabel(DeclarativeBase):
             columns=dict(zip(data.columns, list(self._schema.model_fields)))
         )
         data.replace({np.nan: None}, inplace=True)
-        engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-        with Session(engine) as session:
+        with Session() as session:
             for r in range(data.shape[0]):
                 table_model = self._schema.model_validate(data.iloc[r].to_dict())
                 stmt = insert(self.__table__).values(table_model.dict())
                 session.execute(stmt)
             session.commit()
-            session.close()
+
+    def select_all(self):
+        return str(self.__table__.select().distinct())
+
+    def filter(self, filter_cond: Dict):
+        q = select(self.__table__)
+        for fil, cond in filter_cond.items():
+            if hasattr(self.__table__.c, fil):
+                q = q.filter(getattr(self.__table__.c, fil).like(f"%{cond}%"))
+        return q.distinct()
 
 
-class Grant(BaseTabel):
+class Grant(BaseTable):
     _schema = Nir_Grant
     __table__ = Table(
         "nir_grant",
@@ -144,14 +173,17 @@ class Grant(BaseTabel):
             literal_column("0").label("nir_templan_count"),
             literal_column("0").label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
-    
+
     def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.grnti_code).join(VUZ, VUZ.vuz_code == self.__table__.c.vuz_code, isouter=True)
+        q = select(self.__table__.c.grnti_code).join(
+            VUZ, VUZ.vuz_code == self.__table__.c.vuz_code, isouter=True
+        )
         if filter_cond is not None:
             q = q.filter_by(**filter_cond)
         return q.order_by(self.__table__.c.grnti_code).distinct()
 
-class NTP(BaseTabel):
+
+class NTP(BaseTable):
     _schema = Nir_NTP
     __table__ = Table(
         "nir_ntp",
@@ -180,16 +212,9 @@ class NTP(BaseTabel):
             literal_column("0").label("nir_templan_count"),
             literal_column("0").label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
-    
-    def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.grnti_code).join(VUZ, VUZ.vuz_code == self.__table__.c.vuz_code)
-        if filter_cond is not None:
-            q = q.filter_by(**filter_cond)
-            print(q)
-        return q.order_by(self.__table__.c.grnti_code).distinct()
 
 
-class Templan(BaseTabel):
+class Templan(BaseTable):
     _schema = Nir_Templan
     __table__ = Table(
         "nir_templan",
@@ -217,16 +242,9 @@ class Templan(BaseTabel):
             func.count(self.__table__.c.nir_reg_number).label("nir_templan_count"),
             func.sum(self.__table__.c.value_plan).label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
-    
-    def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.grnti_code).join(VUZ, VUZ.vuz_code == self.__table__.c.vuz_code, isouter=True)
-        if filter_cond is not None:
-            q = q.filter_by(**filter_cond)
-        print(q)
-        return q.order_by(self.__table__.c.grnti_code).distinct()
 
 
-class VUZ(BaseTabel):
+class VUZ(BaseTable):
     _schema = Nir_VUZ
     __table__ = Table(
         "vuz",
@@ -245,32 +263,8 @@ class VUZ(BaseTabel):
         Column("profile", String),
     )
 
-    def get_all_vuz_names(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.vuz_name)
-        if filter_cond is not None:
-            q = q.filter_by(**filter_cond)
-        return q.order_by(self.__table__.c.vuz_name).distinct()
 
-    def get_all_vuz_cities(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.city)
-        if filter_cond is not None:
-            q = q.filter_by(**filter_cond)
-        return q.order_by(self.__table__.c.city).distinct()
-
-    def get_all_vuz_fed_sub(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.federation_subject)
-        if filter_cond is not None:
-            q = q.filter_by(**filter_cond)
-        return q.order_by(self.__table__.c.federation_subject).distinct()
-    
-    def get_all_vuz_region(self, filter_cond: Optional[Dict] = None):
-        q = select(self.__table__.c.region)
-        if filter_cond is not None:
-            q = q.filter_by(**filter_cond)
-        return q.order_by(self.__table__.c.region).distinct()
-
-
-class Pivot(BaseModel):
+class Pivot(BaseTable):
     __table__ = Table(
         "pivot",
         metadata_obj,
