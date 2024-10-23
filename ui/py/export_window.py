@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'ui\exportWindow.ui'
+# Form implementation generated from reading ui file 'ui/qt/exportWindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -13,46 +13,57 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(453, 409)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
-        self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.label = QtWidgets.QLabel(parent=Dialog)
+        self.label.setGeometry(QtCore.QRect(50, 30, 371, 25))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        font.setBold(False)
+        font.setWeight(50)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.widget = QtWidgets.QWidget(parent=Dialog)
+        self.widget.setGeometry(QtCore.QRect(100, 110, 251, 171))
+        self.widget.setObjectName("widget")
+        self.gridLayout = QtWidgets.QGridLayout(self.widget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
-        self.comboBox_2 = QtWidgets.QComboBox(parent=Dialog)
-        self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox_2.addItem("")
-        self.gridLayout.addWidget(self.comboBox_2, 2, 1, 1, 1)
-        self.comboBox = QtWidgets.QComboBox(parent=Dialog)
+        self.comboBox = QtWidgets.QComboBox(parent=self.widget)
         self.comboBox.setObjectName("comboBox")
         self.comboBox.addItem("")
-        self.gridLayout.addWidget(self.comboBox, 1, 1, 1, 1)
-        self.buttonBox = QtWidgets.QDialogButtonBox(parent=Dialog)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
-        )
+        self.gridLayout.addWidget(self.comboBox, 0, 0, 1, 1)
+        self.comboBox_2 = QtWidgets.QComboBox(parent=self.widget)
+        self.comboBox_2.setObjectName("comboBox_2")
+        self.comboBox_2.addItem("")
+        self.gridLayout.addWidget(self.comboBox_2, 1, 0, 1, 1)
+        self.buttonBox = QtWidgets.QDialogButtonBox(parent=self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.buttonBox.sizePolicy().hasHeightForWidth())
         self.buttonBox.setSizePolicy(sizePolicy)
         self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(
-            QtWidgets.QDialogButtonBox.StandardButton.Cancel
-            | QtWidgets.QDialogButtonBox.StandardButton.Ok
-        )
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel|QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.gridLayout.addWidget(self.buttonBox, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)  # type: ignore
-        self.buttonBox.rejected.connect(Dialog.reject)  # type: ignore
+        self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
+        self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.comboBox_2.setItemText(0, _translate("Dialog", "Фильтры"))
+        self.label.setText(_translate("Dialog", "Создание отчёта по сводной таблице"))
         self.comboBox.setItemText(0, _translate("Dialog", "Формат"))
+        self.comboBox_2.setItemText(0, _translate("Dialog", "Фильтры"))

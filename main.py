@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QApplication
 
 from src.windows.main import MainWindow
 
-from core import create_sql_tables
+from models import create_sql_tables
 
 if __name__ == "__main__":
 

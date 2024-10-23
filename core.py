@@ -1,34 +1,21 @@
-from os.path import isfile
-
 from sqlalchemy import create_engine
-
-from models import (
-    metadata_obj,
-    NTP,
-    Grant,
-    Templan,
-    VUZ,
-    Pivot,
-    create_pivot,
-)
+from sqlalchemy.orm import Session as SQLAlchemySession
 
 
-def create_sql_tables():
-    if not (isfile("DB/DataBase.sqlite")):
-        engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-        metadata_obj.drop_all(engine)
-        metadata_obj.create_all(engine)
-        gr_table = Grant()
-        ntp_table = NTP()
-        tp_table = Templan()
-        vuz_table = VUZ()
-        pivot_table = Pivot()
-        gr_table.create_table()
-        ntp_table.create_table()
-        tp_table.create_table()
-        vuz_table.create_table()
+class Session:
+    _instance = None
+    _engine_string = "sqlite:///DB/DataBase.sqlite"
+    _engine = None
 
-        create_pivot(gr_table, ntp_table, tp_table, pivot_table)
-        print("База данных DataBase.sqlite создана и подключена")
-    else:
-        print("База данных DataBase.sqlite подключена")
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is not None:
+            return cls._instance
+        cls._engine = create_engine(cls._engine_string, echo=False)
+        return super().__new__(cls, *args, **kwargs)
+
+    def __enter__(self):
+        self.session = SQLAlchemySession(self._engine)
+        return self.session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
