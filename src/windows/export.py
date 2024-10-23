@@ -6,6 +6,7 @@ from docx.shared import Pt, Inches
 from core import Session
 from models import Pivot
 
+
 class ExportDialog(QDialog):
     def __init__(self):
         super().__init__()
@@ -18,8 +19,10 @@ class ExportDialog(QDialog):
 
     def create_report(self):
         make_report()  # Вызов функции make_report, которая определена ниже
-        self.show_notification("Отчёт успешно сохранён в папку DB!")  # Показываем уведомление
-        
+        self.show_notification(
+            "Отчёт успешно сохранён в папку DB!"
+        )  # Показываем уведомление
+
     def show_notification(self, message):
         # Создаём всплывающее сообщение
         msg_box = QMessageBox(self)
@@ -32,26 +35,13 @@ class ExportDialog(QDialog):
 
         msg_box.exec()  # Показываем сообщение пользователю
 
-def make_report():
-    column_names = {
-        "UniqueID": "Уник. идентификатор",
-        "vuz_code": "Код ВУЗа",
-        "vuz_name": "Наименование ВУЗа",
-        "total_nir_grant_count": "Кол-во по грантам",
-        "total_grant_value": "Сумма по грантам",
-        "total_nir_ntp_count": "Кол-во по НТП",
-        "total_year_value_plan": "Сумма по НТП",
-        "total_value_plan": "Сумма по тем. планам",
-        "total_nir_templan_count": "Кол-во по тем. планам",
-        "total_count": "Общее кол-во",
-        "total_sum": "Общая сумма",
-    }
 
+def make_report():
     with Session() as session:
         rows = session.query(Pivot).all()
 
         doc = Document()
-        doc.add_heading('Отчет из совдной таблицы', level=1)
+        doc.add_heading("Отчет из совдной таблицы", level=1)
         table = doc.add_table(rows=1, cols=len(Pivot.__table__.columns))
 
         # Настройка полей страницы
@@ -61,13 +51,28 @@ def make_report():
         section.left_margin = Inches(0.5)
         section.right_margin = Inches(0.5)
 
+        # Заголовки столбцов
+        column_names = [
+            "Ном",
+            "Код",
+            "ВУЗ",
+            "Кол-во гр",
+            "Сумма гр",
+            "Кол-во НТП",
+            "Сумма НТП",
+            "Сумма тп",
+            "Кол-во тп",
+            "Общее кол-во",
+            "Общая сумма",
+        ]
+
         hdr_cells = table.rows[0].cells
-        for i, (col_key, col_name) in enumerate(column_names.items()):
-            hdr_cells[i].text = col_name
+        for i, column in enumerate(column_names):
+            hdr_cells[i].text = column
             for paragraph in hdr_cells[i].paragraphs:
                 run = paragraph.runs[0]
-                run.font.name = 'Times New Roman'
-                run.font.size = Pt(10)
+                run.font.name = "Times New Roman"
+                run.font.size = Pt(10)  # размер шрифта 10
             paragraph.paragraph_format.space_after = 0
 
         for row in rows:
@@ -88,15 +93,16 @@ def make_report():
             for cell in row_cells:
                 for paragraph in cell.paragraphs:
                     run = paragraph.runs[0]
-                    run.font.name = 'Times New Roman'
+                    run.font.name = "Times New Roman"
                     run.font.size = Pt(10)
 
-        table.style = 'Table Grid'
+        table.style = "Table Grid"
         set_table_width(table)
 
-        doc.save('DB/Сводная таблица.docx')
-    
+        doc.save("DB/Сводная таблица.docx")
+
     print("Отчет успешно создан и сохранен как report.docx.")
+
 
 def set_table_width(table):
     for row in table.rows:

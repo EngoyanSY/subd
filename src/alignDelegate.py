@@ -6,7 +6,7 @@ class AlignDelegate(QStyledItemDelegate):
     def __init__(self, table_name=None, parent=None):
         super().__init__(parent)
         self.table_name = table_name
-        
+
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
 

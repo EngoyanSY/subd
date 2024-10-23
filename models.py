@@ -1,10 +1,8 @@
 from typing import Optional, Dict
 import os
 import numpy as np
-from docx import Document
-from docx.shared import Pt, Inches
-from docx.oxml import OxmlElement
 from pydantic import BaseModel
+
 # from src.windows.export import make_report
 from sqlalchemy import (
     Table,
@@ -89,8 +87,6 @@ def create_pivot(Grant, Ntp, Templan, Pivot):
 
         session.execute(insert_stmt)
         session.commit()
-
-
 
 
 metadata_obj = MetaData()
