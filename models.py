@@ -149,17 +149,17 @@ class Grant(BaseTable):
         "nir_grant",
         metadata_obj,
         Column("UniqueID", Integer, primary_key=True),
-        Column("nir_code", Integer),
         Column("kon_code", Integer),
+        Column("nir_code", Integer),
         Column("vuz_code", Integer),
         Column("vuz_name", String),
         Column("grnti_code", String),
         Column("grant_value", Integer),
         Column("nir_director", String),
+        Column("nir_name", String),
         Column("director_position", String),
         Column("director_academic_title", String),
         Column("director_academic_degree", String),
-        Column("nir_name", String),
     )
 
     def grant_summary(self):
@@ -196,9 +196,9 @@ class NTP(BaseTable):
         Column("grnti_code", String),
         Column("year_value_plan", Integer),
         Column("nir_director", String),
-        Column("director_meta", String),
         Column("nir_type", String),
         Column("nir_name", String),
+        Column("director_meta", String),
     )
 
     def ntp_summary(self):
@@ -225,10 +225,10 @@ class Templan(BaseTable):
         Column("grnti_code", String),
         Column("value_plan", Integer),
         Column("nir_director", String),
-        Column("director_position", String),
         Column("nir_type", String),
         Column("nir_reg_number", String),
         Column("nir_name", String),
+        Column("director_position", String),
     )
 
     def tp_summary(self):
