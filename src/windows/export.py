@@ -1,5 +1,4 @@
-from PyQt6.QtWidgets import QDialog
-
+from PyQt6.QtWidgets import QDialog, QMessageBox
 from ui.py.export_window import Ui_Dialog
 
 from docx import Document
@@ -12,13 +11,26 @@ class ExportDialog(QDialog):
         super().__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("Создание отчёта")
-        
+        self.setWindowTitle("Экспорт отчётов")
         # Подключаем сигнал кнопки Ok для вызова функции create_report
-        self.ui.buttonBox.accepted.connect(self.create_report)
+        self.ui.pushButton_save.clicked.connect(self.create_report)
+        self.ui.pushButton_cancel.clicked.connect(self.close)
 
     def create_report(self):
         make_report()  # Вызов функции make_report, которая определена ниже
+        self.show_notification("Отчёт успешно сохранён в папку DB!")  # Показываем уведомление
+        
+    def show_notification(self, message):
+        # Создаём всплывающее сообщение
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Уведомление")
+        msg_box.setText(message)
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+
+        # Устанавливаем фиксированную высоту
+        msg_box.setFixedHeight(500)  # Установите нужную высоту
+
+        msg_box.exec()  # Показываем сообщение пользователю
 
 def make_report():
     column_names = {
@@ -82,8 +94,8 @@ def make_report():
         table.style = 'Table Grid'
         set_table_width(table)
 
-        doc.save('DB/report.docx')
-
+        doc.save('DB/Сводная таблица.docx')
+    
     print("Отчет успешно создан и сохранен как report.docx.")
 
 def set_table_width(table):

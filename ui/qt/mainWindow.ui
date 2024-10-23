@@ -348,24 +348,33 @@
     </rect>
    </property>
    <property name="defaultUp">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="nativeMenuBar">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <widget class="QMenu" name="main_data">
     <property name="title">
      <string>Данные</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QMenu" name="export_2">
     <property name="title">
      <string>Отчёты</string>
     </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QMenu" name="about">
     <property name="title">
      <string>О программе</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
    </widget>
    <addaction name="main_data"/>
