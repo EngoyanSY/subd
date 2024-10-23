@@ -30,7 +30,7 @@ from core import Session
 
 def create_pivot(Grant, Ntp, Templan, Pivot):
     engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-    with Session(engine) as session:
+    with Session() as session:
         # Первый запрос
         query1 = Grant.grant_summary()
 
