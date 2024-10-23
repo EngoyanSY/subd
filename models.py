@@ -3,7 +3,6 @@ import os
 import numpy as np
 from docx import Document
 from docx.shared import Pt
-from docx.oxml import OxmlElement
 
 from pydantic import BaseModel
 from sqlalchemy import (
@@ -90,24 +89,24 @@ def create_pivot(Grant, Ntp, Templan, Pivot):
         session.execute(insert_stmt)
         session.commit()
 
+
 def set_table_width(table):
     for row in table.rows:
         for cell in row.cells:
-            # Устанавливаем ширину ячейки равной её контенту (добавьте дополнительный отступ если хотите)
-            cell.width = Pt(0)  # устанавливаем в ноль, чтобы автоматически подстроить по контенту
-            # Убираем обтекание текста
+            cell.width = Pt(0)
             cell.paragraphs[0].paragraph_format.space_after = 0
+
 
 def make_report():
     with Session() as session:
         rows = session.query(Pivot).all()
 
         doc = Document()
-        doc.add_heading('Отчет из совдной таблицы', level=1)
+        doc.add_heading("Отчет из совдной таблицы", level=1)
         table = doc.add_table(rows=1, cols=len(Pivot.__table__.columns))
 
-        #Заголовки столбцов
-        '''
+        # Заголовки столбцов
+        """
         hdr_cells = table.rows[0].cells
         for i, column in enumerate(Pivot.__table__.columns):
             hdr_cells[i].text = column.name
@@ -116,7 +115,7 @@ def make_report():
                 run.font.name = 'Times New Roman'
                 run.font.size = Pt(10)  # размер шрифта 10
             paragraph.paragraph_format.space_after = 0
-        '''
+        """
 
         for row in rows:
             row_cells = table.add_row().cells
@@ -136,17 +135,18 @@ def make_report():
             for cell in row_cells:
                 for paragraph in cell.paragraphs:
                     run = paragraph.runs[0]
-                    run.font.name = 'Times New Roman'
+                    run.font.name = "Times New Roman"
                     run.font.size = Pt(10)
 
         # Установка ширины столбцов
         set_table_width(table)
 
-        doc.save('DB/report.docx')
+        doc.save("DB/report.docx")
 
         session.close()
 
     print("Отчет успешно создан и сохранен как report.docx.")
+
 
 metadata_obj = MetaData()
 
