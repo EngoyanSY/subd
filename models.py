@@ -1,6 +1,9 @@
 from typing import Optional, Dict
 import os
 import numpy as np
+from docx import Document
+from docx.shared import Pt
+from docx.oxml import OxmlElement
 
 from pydantic import BaseModel
 from sqlalchemy import (
@@ -29,7 +32,6 @@ from core import Session
 
 
 def create_pivot(Grant, Ntp, Templan, Pivot):
-    engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
     with Session() as session:
         # Первый запрос
         query1 = Grant.grant_summary()
@@ -88,6 +90,63 @@ def create_pivot(Grant, Ntp, Templan, Pivot):
         session.execute(insert_stmt)
         session.commit()
 
+def set_table_width(table):
+    for row in table.rows:
+        for cell in row.cells:
+            # Устанавливаем ширину ячейки равной её контенту (добавьте дополнительный отступ если хотите)
+            cell.width = Pt(0)  # устанавливаем в ноль, чтобы автоматически подстроить по контенту
+            # Убираем обтекание текста
+            cell.paragraphs[0].paragraph_format.space_after = 0
+
+def make_report():
+    with Session() as session:
+        rows = session.query(Pivot).all()
+
+        doc = Document()
+        doc.add_heading('Отчет из совдной таблицы', level=1)
+        table = doc.add_table(rows=1, cols=len(Pivot.__table__.columns))
+
+        #Заголовки столбцов
+        '''
+        hdr_cells = table.rows[0].cells
+        for i, column in enumerate(Pivot.__table__.columns):
+            hdr_cells[i].text = column.name
+            for paragraph in hdr_cells[i].paragraphs:
+                run = paragraph.runs[0]
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(10)  # размер шрифта 10
+            paragraph.paragraph_format.space_after = 0
+        '''
+
+        for row in rows:
+            row_cells = table.add_row().cells
+            row_cells[0].text = str(row.UniqueID)
+            row_cells[1].text = str(row.vuz_code)
+            row_cells[2].text = str(row.vuz_name)
+            row_cells[3].text = str(row.total_nir_grant_count)
+            row_cells[4].text = str(row.total_grant_value)
+            row_cells[5].text = str(row.total_nir_ntp_count)
+            row_cells[6].text = str(row.total_year_value_plan)
+            row_cells[7].text = str(row.total_nir_templan_count)
+            row_cells[8].text = str(row.total_value_plan)
+            row_cells[9].text = str(row.total_count)
+            row_cells[10].text = str(row.total_sum)
+
+            # Установка шрифта для ячеек с данными
+            for cell in row_cells:
+                for paragraph in cell.paragraphs:
+                    run = paragraph.runs[0]
+                    run.font.name = 'Times New Roman'
+                    run.font.size = Pt(10)
+
+        # Установка ширины столбцов
+        set_table_width(table)
+
+        doc.save('DB/report.docx')
+
+        session.close()
+
+    print("Отчет успешно создан и сохранен как report.docx.")
 
 metadata_obj = MetaData()
 
@@ -108,6 +167,7 @@ def create_sql_tables():
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
+        make_report()
         print("База данных DataBase.sqlite создана и подключена")
     else:
         print("База данных DataBase.sqlite подключена")
