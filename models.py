@@ -1,8 +1,9 @@
 from typing import Optional, Dict
 import os
 import numpy as np
-
 from pydantic import BaseModel
+
+# from src.windows.export import make_report
 from sqlalchemy import (
     Table,
     Column,
@@ -29,8 +30,7 @@ from core import Session
 
 
 def create_pivot(Grant, Ntp, Templan, Pivot):
-    engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-    with Session(engine) as session:
+    with Session() as session:
         # Первый запрос
         query1 = Grant.grant_summary()
 
@@ -108,6 +108,7 @@ def create_sql_tables():
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
+        # make_report()
         print("База данных DataBase.sqlite создана и подключена")
     else:
         print("База данных DataBase.sqlite подключена")
@@ -149,17 +150,17 @@ class Grant(BaseTable):
         "nir_grant",
         metadata_obj,
         Column("UniqueID", Integer, primary_key=True),
-        Column("nir_code", Integer),
         Column("kon_code", Integer),
+        Column("nir_code", Integer),
         Column("vuz_code", Integer),
         Column("vuz_name", String),
         Column("grnti_code", String),
         Column("grant_value", Integer),
         Column("nir_director", String),
+        Column("nir_name", String),
         Column("director_position", String),
         Column("director_academic_title", String),
         Column("director_academic_degree", String),
-        Column("nir_name", String),
     )
 
     def grant_summary(self):
@@ -196,9 +197,9 @@ class NTP(BaseTable):
         Column("grnti_code", String),
         Column("year_value_plan", Integer),
         Column("nir_director", String),
-        Column("director_meta", String),
         Column("nir_type", String),
         Column("nir_name", String),
+        Column("director_meta", String),
     )
 
     def ntp_summary(self):
@@ -225,10 +226,10 @@ class Templan(BaseTable):
         Column("grnti_code", String),
         Column("value_plan", Integer),
         Column("nir_director", String),
-        Column("director_position", String),
         Column("nir_type", String),
         Column("nir_reg_number", String),
         Column("nir_name", String),
+        Column("director_position", String),
     )
 
     def tp_summary(self):
