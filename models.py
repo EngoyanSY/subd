@@ -1,7 +1,9 @@
+from typing import Optional, Dict
 import os
 import numpy as np
-
 from pydantic import BaseModel
+
+# from src.windows.export import make_report
 from sqlalchemy import (
     Table,
     Column,
@@ -16,7 +18,6 @@ from sqlalchemy import (
     literal_column,
 )
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Session
 import pandas as pd
 
 from schema import (
@@ -25,11 +26,11 @@ from schema import (
     Nir_Templan,
     Nir_VUZ,
 )
+from core import Session
 
 
 def create_pivot(Grant, Ntp, Templan, Pivot):
-    engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-    with Session(engine) as session:
+    with Session() as session:
         # Первый запрос
         query1 = Grant.grant_summary()
 
@@ -91,7 +92,29 @@ def create_pivot(Grant, Ntp, Templan, Pivot):
 metadata_obj = MetaData()
 
 
-class BaseTabel(DeclarativeBase):
+def create_sql_tables():
+    if not (os.path.isfile("DB/DataBase.sqlite")):
+        engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
+        metadata_obj.drop_all(engine)
+        metadata_obj.create_all(engine)
+        gr_table = Grant()
+        ntp_table = NTP()
+        tp_table = Templan()
+        vuz_table = VUZ()
+        pivot_table = Pivot()
+        gr_table.create_table()
+        ntp_table.create_table()
+        tp_table.create_table()
+        vuz_table.create_table()
+
+        create_pivot(gr_table, ntp_table, tp_table, pivot_table)
+        # make_report()
+        print("База данных DataBase.sqlite создана и подключена")
+    else:
+        print("База данных DataBase.sqlite подключена")
+
+
+class BaseTable(DeclarativeBase):
     _schema = BaseModel
 
     def create_table(self):
@@ -103,33 +126,41 @@ class BaseTabel(DeclarativeBase):
             columns=dict(zip(data.columns, list(self._schema.model_fields)))
         )
         data.replace({np.nan: None}, inplace=True)
-        engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
-        with Session(engine) as session:
+        with Session() as session:
             for r in range(data.shape[0]):
                 table_model = self._schema.model_validate(data.iloc[r].to_dict())
                 stmt = insert(self.__table__).values(table_model.dict())
                 session.execute(stmt)
             session.commit()
-            session.close()
+
+    def select_all(self):
+        return str(self.__table__.select().distinct())
+
+    def filter(self, filter_cond: Dict):
+        q = select(self.__table__)
+        for fil, cond in filter_cond.items():
+            if hasattr(self.__table__.c, fil):
+                q = q.filter(getattr(self.__table__.c, fil).like(f"%{cond}%"))
+        return q.distinct()
 
 
-class Grant(BaseTabel):
+class Grant(BaseTable):
     _schema = Nir_Grant
     __table__ = Table(
         "nir_grant",
         metadata_obj,
         Column("UniqueID", Integer, primary_key=True),
-        Column("nir_code", Integer),
         Column("kon_code", Integer),
+        Column("nir_code", Integer),
         Column("vuz_code", Integer),
         Column("vuz_name", String),
         Column("grnti_code", String),
         Column("grant_value", Integer),
         Column("nir_director", String),
+        Column("nir_name", String),
         Column("director_position", String),
         Column("director_academic_title", String),
         Column("director_academic_degree", String),
-        Column("nir_name", String),
     )
 
     def grant_summary(self):
@@ -144,8 +175,16 @@ class Grant(BaseTabel):
             literal_column("0").label("total_value_plan"),
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
 
+    def get_grnti_codes(self, filter_cond: Optional[Dict] = None):
+        q = select(self.__table__.c.grnti_code).join(
+            VUZ, VUZ.vuz_code == self.__table__.c.vuz_code, isouter=True
+        )
+        if filter_cond is not None:
+            q = q.filter_by(**filter_cond)
+        return q.order_by(self.__table__.c.grnti_code).distinct()
 
-class NTP(BaseTabel):
+
+class NTP(BaseTable):
     _schema = Nir_NTP
     __table__ = Table(
         "nir_ntp",
@@ -158,9 +197,9 @@ class NTP(BaseTabel):
         Column("grnti_code", String),
         Column("year_value_plan", Integer),
         Column("nir_director", String),
-        Column("director_meta", String),
         Column("nir_type", String),
         Column("nir_name", String),
+        Column("director_meta", String),
     )
 
     def ntp_summary(self):
@@ -176,7 +215,7 @@ class NTP(BaseTabel):
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
 
 
-class Templan(BaseTabel):
+class Templan(BaseTable):
     _schema = Nir_Templan
     __table__ = Table(
         "nir_templan",
@@ -187,10 +226,10 @@ class Templan(BaseTabel):
         Column("grnti_code", String),
         Column("value_plan", Integer),
         Column("nir_director", String),
-        Column("director_position", String),
         Column("nir_type", String),
         Column("nir_reg_number", String),
         Column("nir_name", String),
+        Column("director_position", String),
     )
 
     def tp_summary(self):
@@ -206,7 +245,7 @@ class Templan(BaseTabel):
         ).group_by(self.__table__.c.vuz_code, self.__table__.c.vuz_name)
 
 
-class VUZ(BaseTabel):
+class VUZ(BaseTable):
     _schema = Nir_VUZ
     __table__ = Table(
         "vuz",
@@ -226,7 +265,7 @@ class VUZ(BaseTabel):
     )
 
 
-class Pivot(BaseModel):
+class Pivot(BaseTable):
     __table__ = Table(
         "pivot",
         metadata_obj,

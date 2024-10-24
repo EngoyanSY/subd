@@ -35,8 +35,8 @@ class MainWindow(QMainWindow):
             "region": "Регион",
             "city": "Город",
             "status": "Статус",
-            "fed_sub_code": "Код федерального субъекта",
-            "federation_subject": "Федеральный субъект",
+            "fed_sub_code": "Код фед. субъекта",
+            "federation_subject": "Фед. субъект",
             "gr_ved": "ГР ВЭД",
             "profile": "Профиль",
         }
@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
             "vuz_code": "Код ВУЗа",
             "vuz_name": "Наименование ВУЗа",
             "grnti_code": "Код по ГРНТИ",
-            "grant_value": "Плановый объём гранта",
+            "grant_value": "Пл. объём гранта",
             "nir_name": "Наименование НИР",
             "nir_director": "Руководитель НИР",
             "director_position": "Должность",
@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
             "director_meta": "Должность, Уч. звание, Уч. степень",
             "grnti_code": "Код ГРНТИ НИР",
             "nir_type": "Характер НИР",
-            "year_value_plan": "Плановое финансирование текущего года",
+            "year_value_plan": "Пл. фин-е текущего года",
         }
 
     @property
@@ -83,7 +83,7 @@ class MainWindow(QMainWindow):
             "vuz_abb": "Аббревиатура ВУЗа",
             "nir_director": "Руководитель НИР",
             "grnti_theme_code": "Код ГРНТИ НИР",
-            "value_plan": "Плановое финансирование",
+            "value_plan": "Пл. финансирование",
             "nir_name": "Наименование НИР",
             "director_position": "Должность",
             "nir_reg_number": "Номер НИР",
@@ -168,7 +168,7 @@ class MainWindow(QMainWindow):
 
         self.rename_table_columns(table_name, qt_table)
 
-        delegate = AlignDelegate(table_view)
+        delegate = AlignDelegate(table_name, table_view)
         table_view.setItemDelegate(delegate)
 
         table_view.setModel(qt_table)

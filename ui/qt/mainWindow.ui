@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1042</width>
-    <height>757</height>
+    <width>1603</width>
+    <height>1137</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,10 +18,15 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="enabled">
        <bool>true</bool>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+       </font>
       </property>
       <property name="accessibleDescription">
        <string notr="true"/>
@@ -33,7 +38,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>1</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -72,6 +77,11 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -87,6 +97,11 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
           </property>
           <property name="autoFillBackground">
            <bool>false</bool>
@@ -111,6 +126,11 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -118,9 +138,6 @@
            <string>Введите текст</string>
           </property>
          </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QTableView" name="tableView_2"/>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_3">
@@ -134,10 +151,16 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="0">
+         <widget class="QTableView" name="tableView_2">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
        </layout>
-       <zorder>lineEdit_3</zorder>
-       <zorder>label_3</zorder>
-       <zorder>tableView_2</zorder>
       </widget>
       <widget class="QWidget" name="tab_3">
        <property name="autoFillBackground">
@@ -155,13 +178,15 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="placeholderText">
            <string>Введите текст</string>
           </property>
          </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QTableView" name="tableView_3"/>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_4">
@@ -172,6 +197,15 @@
           </property>
           <property name="text">
            <string>Поиск</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QTableView" name="tableView_3">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
           </property>
          </widget>
         </item>
@@ -198,7 +232,13 @@
          </widget>
         </item>
         <item row="3" column="0" colspan="2">
-         <widget class="QTableView" name="tableView_4"/>
+         <widget class="QTableView" name="tableView_4">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QLineEdit" name="lineEdit">
@@ -213,6 +253,11 @@
             <width>0</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
           </property>
           <property name="autoFillBackground">
            <bool>false</bool>
@@ -232,6 +277,24 @@
         <string>Сводка</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_14">
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="lineEdit_13">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="placeholderText">
+           <string>Введите текст</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_13">
           <property name="font">
@@ -244,24 +307,29 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="lineEdit_13">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="placeholderText">
-           <string>Введите текст</string>
+        <item row="2" column="0">
+         <widget class="QTableView" name="tableView_13">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
-         <widget class="QTableView" name="tableView_13"/>
-        </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Таблицы данных</string>
+      </property>
      </widget>
     </item>
    </layout>
@@ -275,29 +343,38 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1042</width>
+     <width>1603</width>
      <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="nativeMenuBar">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <widget class="QMenu" name="main_data">
     <property name="title">
      <string>Данные</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QMenu" name="export_2">
     <property name="title">
      <string>Отчёты</string>
     </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QMenu" name="about">
     <property name="title">
      <string>О программе</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
     </property>
    </widget>
    <addaction name="main_data"/>
