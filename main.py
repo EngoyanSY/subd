@@ -10,8 +10,6 @@ if __name__ == "__main__":
 
     create_sql_tables()
 
-    make_report()
-
     app = QApplication(sys.argv)
 
     window = MainWindow()
