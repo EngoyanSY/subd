@@ -98,4 +98,3 @@ class Nir_GRNTI(BaseModel):
     def validate_grnti_code(cls, value):
         if isinstance(value, int):
             return f"{value:02}"
-
