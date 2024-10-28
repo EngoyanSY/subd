@@ -196,7 +196,7 @@ class MainWindow(QMainWindow):
 
         self.rename_table_columns(table.__table__.name, qt_table)
 
-        delegate = AlignDelegate(table_name, table_view)
+        delegate = AlignDelegate(table.__table__.name, table_view)
         table_view.setItemDelegate(delegate)
 
         table_view.setModel(qt_table)
@@ -221,6 +221,8 @@ class MainWindow(QMainWindow):
                 "region": set([v[2] for v in vuz]),
                 "federation_subject": set([v[3] for v in vuz]),
             }
+            if "vuz_name" not in filters_vuz:
+                vuz["name"].add(" ")
             grnti_codes = (
                 session.execute(NTP().filter(filter_cond=filters_vuz))
                 .columns("grnti_code")
