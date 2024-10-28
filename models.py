@@ -26,6 +26,7 @@ from schema import (
     Nir_NTP,
     Nir_Templan,
     Nir_VUZ,
+    Nir_GRNTI,
 )
 from core import Session
 
@@ -162,10 +163,12 @@ def create_sql_tables():
         ntp_table = NTP()
         tp_table = Templan()
         vuz_table = VUZ()
+        grnti_table = GRNTI()
         pivot_table = Pivot()
         gr_table.create_table()
         ntp_table.create_table()
         tp_table.create_table()
+        grnti_table.create_table()
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
@@ -322,6 +325,17 @@ class VUZ(BaseTable):
         Column("full_name", String),
         Column("gr_ved", String),
         Column("profile", String),
+    )
+
+
+class GRNTI(BaseTable):
+    _schema = Nir_GRNTI
+    __table__ = Table(
+        "grnti",
+        metadata_obj,
+        Column("UniqueID", Integer, primary_key=True),
+        Column("codrub", String),
+        Column("rubrika", String),
     )
 
 

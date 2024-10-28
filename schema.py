@@ -86,3 +86,16 @@ class Nir_VUZ(BaseModel):
     gr_ved: Optional[str] = Field(default=None)
     profile: Optional[str] = Field(default=None)
     table_name: ClassVar[str] = "VUZ.xlsx"
+
+
+class Nir_GRNTI(BaseModel):
+    UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
+    codrub: str = Field()
+    rubrika: str = Field()
+    table_name: ClassVar[str] = "grntirub.xlsx"
+
+    @validator("codrub", pre=True)
+    def validate_grnti_code(cls, value):
+        if isinstance(value, int):
+            return f"{value:02}"
+
