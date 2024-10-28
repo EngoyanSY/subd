@@ -152,6 +152,8 @@ metadata_obj = MetaData()
 
 
 def create_sql_tables():
+    if not(os.path.isdir('DB')):
+        os.mkdir("DB")
     if not (os.path.isfile("DB/DataBase.sqlite")):
         engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
         metadata_obj.drop_all(engine)
@@ -179,7 +181,7 @@ class BaseTable(DeclarativeBase):
         # Считывает xlsx файл
         # Переименовывает столбцы и заменяет отсуттвующие данные на None
         # Построчно валидирует данные через Pydantic и вносит их в таблицу
-        data = pd.read_excel(os.path.join("DB", self._schema.table_name))
+        data = pd.read_excel(os.path.join("data", self._schema.table_name))
         data = data.rename(
             columns=dict(zip(data.columns, list(self._schema.model_fields)))
         )
