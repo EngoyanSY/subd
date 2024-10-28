@@ -7,4 +7,3 @@ logs/
 venv/
 venv/*
 DB/DataBase.sqlite
-DB/report.docx

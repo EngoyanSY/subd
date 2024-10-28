@@ -5,6 +5,8 @@ from docx import Document
 from docx.shared import Pt
 
 from pydantic import BaseModel
+
+# from src.windows.export import make_report
 from sqlalchemy import (
     Table,
     Column,
@@ -172,6 +174,7 @@ def create_sql_tables():
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
+        # make_report()
         print("База данных DataBase.sqlite создана и подключена")
     else:
         print("База данных DataBase.sqlite подключена")
