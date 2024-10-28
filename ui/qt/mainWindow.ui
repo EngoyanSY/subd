@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1603</width>
-    <height>1137</height>
+    <height>1408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,21 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+    <item row="7" column="4">
+     <widget class="QPushButton" name="set_filter">
+      <property name="text">
+       <string>Установить фильтр</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
+     <widget class="QPushButton" name="clear_filter">
+      <property name="text">
+       <string>Очистить фильтры</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="5">
      <widget class="QTabWidget" name="tabWidget">
       <property name="enabled">
        <bool>true</bool>
@@ -38,7 +52,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -54,43 +68,7 @@
         <string>ВУЗы</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>Поиск</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="lineEdit_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>Введите текст</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="2" column="0" colspan="2">
          <widget class="QTableView" name="tableView">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -118,40 +96,7 @@
         <string>Гранты</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="lineEdit_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>Введите текст</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Поиск</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <widget class="QTableView" name="tableView_2">
           <property name="font">
            <font>
@@ -170,37 +115,7 @@
         <string>НТП</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="lineEdit_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="placeholderText">
-           <string>Введите текст</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Поиск</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <widget class="QTableView" name="tableView_3">
           <property name="font">
            <font>
@@ -219,54 +134,12 @@
         <string>Тем. планы</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Поиск </string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
+        <item row="1" column="0" colspan="2">
          <widget class="QTableView" name="tableView_4">
           <property name="font">
            <font>
             <pointsize>8</pointsize>
            </font>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QLineEdit" name="lineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>Введите текст</string>
           </property>
          </widget>
         </item>
@@ -277,37 +150,7 @@
         <string>Сводка</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_14">
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="lineEdit_13">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="placeholderText">
-           <string>Введите текст</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_13">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Поиск</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <widget class="QTableView" name="tableView_13">
           <property name="font">
            <font>
@@ -332,6 +175,71 @@
       </property>
      </widget>
     </item>
+    <item row="6" column="0">
+     <widget class="QComboBox" name="vuz">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>ВУЗ</string>
+      </property>
+      <property name="placeholderText">
+       <string>ВУЗ</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="3">
+     <widget class="QComboBox" name="obl">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Регион</string>
+      </property>
+      <property name="placeholderText">
+       <string>Субъект Федерации</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="city">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Город</string>
+      </property>
+      <property name="placeholderText">
+       <string>Город</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QComboBox" name="subject">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Субъект Федерации</string>
+      </property>
+      <property name="placeholderText">
+       <string>Регион</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="4">
+     <widget class="QComboBox" name="grnti_code">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Код ГРНТИ</string>
+      </property>
+      <property name="placeholderText">
+       <string>Код ГРНТИ</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -344,7 +252,7 @@
      <x>0</x>
      <y>0</y>
      <width>1603</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">
