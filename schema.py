@@ -1,9 +1,18 @@
-from typing import Optional, ClassVar
+from typing import Optional, ClassVar, List
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
+from core import Session
+
+class BaseSchema(BaseModel):
+
+    @field_validator("grnti_code", mode='before', check_fields=False)
+    def validate_grnti_code(cls, value):
+        if isinstance(value, int):
+            return str(value)
+        return value
 
 
-class Nir_Grant(BaseModel):
+class Nir_Grant(BaseSchema):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
     kon_code: int = Field()
     nir_code: int = Field()
@@ -18,14 +27,8 @@ class Nir_Grant(BaseModel):
     director_academic_degree: Optional[str] = Field(default=None)
     table_name: ClassVar[str] = "Gr_pr.xlsx"
 
-    @validator("grnti_code", pre=True)
-    def validate_grnti_code(cls, value):
-        if isinstance(value, str):
-            return value
-        return None
-
-
-class Nir_NTP(BaseModel):
+    
+class Nir_NTP(BaseSchema):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
     ntp_code: int = Field()
     nir_number: int = Field()
@@ -39,14 +42,8 @@ class Nir_NTP(BaseModel):
     director_meta: str = Field()
     table_name: ClassVar[str] = "Ntp_pr.xlsx"
 
-    @validator("grnti_code", pre=True)
-    def validate_grnti_code(cls, value):
-        if isinstance(value, str):
-            return value
-        return None
 
-
-class Nir_Templan(BaseModel):
+class Nir_Templan(BaseSchema):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
     vuz_code: int = Field()
     vuz_name: Optional[str] = Field(default=None)
@@ -59,20 +56,14 @@ class Nir_Templan(BaseModel):
     director_position: str = Field()
     table_name: ClassVar[str] = "Tp_pr.xlsx"
 
-    @validator("grnti_code", pre=True)
-    def validate_grnti_code(cls, value):
-        if isinstance(value, str):
-            return value
-        return None
-
-    @validator("nir_reg_number", pre=True)
+    @field_validator("nir_reg_number", mode='before')
     def validate_nir_reg_number(cls, value):
-        if isinstance(value, str):
-            return value
-        return str(value)
+        if isinstance(value, int):
+            return str(value)
+        return value
 
 
-class Nir_VUZ(BaseModel):
+class Nir_VUZ(BaseSchema):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
     vuz_code: int = Field()
     vuz_name: Optional[str] = Field(default=None)
@@ -88,13 +79,16 @@ class Nir_VUZ(BaseModel):
     table_name: ClassVar[str] = "VUZ.xlsx"
 
 
-class Nir_GRNTI(BaseModel):
+class Nir_GRNTI(BaseSchema):
     UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
     codrub: str = Field()
     rubrika: str = Field()
     table_name: ClassVar[str] = "grntirub.xlsx"
 
-    @validator("codrub", pre=True)
+    @field_validator("codrub", mode='before')
     def validate_grnti_code(cls, value):
         if isinstance(value, int):
             return f"{value:02}"
+        return value
+
+
