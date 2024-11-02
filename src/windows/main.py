@@ -1,5 +1,5 @@
 from PyQt6 import QtSql
-from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow, QMenu
 from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt
 
@@ -114,12 +114,17 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self.open_about)
         self.ui.about.addAction(about_action)
 
-        export_action = QAction("Экспорт", self)
-        export_action.triggered.connect(self.open_export)
-        self.ui.export_2.addAction(export_action)
+        self.ui.action_5.triggered.connect(self.open_export)
+        self.ui.action_6.triggered.connect(self.open_export)
+        self.ui.action_7.triggered.connect(self.open_export)
+        self.ui.action_8.triggered.connect(self.open_export)
+
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
+
+
+
 
     def connect_database(self):
         db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
