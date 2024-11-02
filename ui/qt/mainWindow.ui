@@ -52,7 +52,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -183,7 +183,7 @@
       <property name="currentText">
        <string>ВУЗ</string>
       </property>
-      <property name="placeholderText">
+      <property name="placeholderText" stdset="0">
        <string>ВУЗ</string>
       </property>
      </widget>
@@ -196,7 +196,7 @@
       <property name="currentText">
        <string>Регион</string>
       </property>
-      <property name="placeholderText">
+      <property name="placeholderText" stdset="0">
        <string>Субъект Федерации</string>
       </property>
      </widget>
@@ -209,7 +209,7 @@
       <property name="currentText">
        <string>Город</string>
       </property>
-      <property name="placeholderText">
+      <property name="placeholderText" stdset="0">
        <string>Город</string>
       </property>
      </widget>
@@ -222,7 +222,7 @@
       <property name="currentText">
        <string>Субъект Федерации</string>
       </property>
-      <property name="placeholderText">
+      <property name="placeholderText" stdset="0">
        <string>Регион</string>
       </property>
      </widget>
@@ -235,7 +235,7 @@
       <property name="currentText">
        <string>Код ГРНТИ</string>
       </property>
-      <property name="placeholderText">
+      <property name="placeholderText" stdset="0">
        <string>Код ГРНТИ</string>
       </property>
      </widget>
@@ -252,7 +252,7 @@
      <x>0</x>
      <y>0</y>
      <width>1603</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -269,15 +269,10 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QMenu" name="export_2">
-    <property name="title">
-     <string>Отчёты</string>
-    </property>
-    <property name="toolTipsVisible">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QMenu" name="about">
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>О программе</string>
     </property>
@@ -285,10 +280,66 @@
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QMenu" name="export_2">
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Отчёт</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>true</bool>
+    </property>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string>Анализ</string>
+     </property>
+     <addaction name="action_5"/>
+     <addaction name="action_6"/>
+     <addaction name="action_7"/>
+     <addaction name="action_8"/>
+    </widget>
+    <addaction name="menu"/>
+   </widget>
    <addaction name="main_data"/>
    <addaction name="export_2"/>
    <addaction name="about"/>
   </widget>
+  <action name="action">
+   <property name="text">
+    <string>Отчёт</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Отчёт</string>
+   </property>
+  </action>
+  <action name="action_5">
+   <property name="text">
+    <string>Распределение НИР по вузам</string>
+   </property>
+  </action>
+  <action name="action_6">
+   <property name="text">
+    <string>Распределение НИР по федеральным округам</string>
+   </property>
+  </action>
+  <action name="action_7">
+   <property name="text">
+    <string>Распределение НИР по статусам</string>
+   </property>
+  </action>
+  <action name="action_8">
+   <property name="text">
+    <string>Распределение НИР по характеру</string>
+   </property>
+  </action>
+  <action name="action_9">
+   <property name="text">
+    <string>Сводка</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

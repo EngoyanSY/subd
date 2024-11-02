@@ -1,4 +1,17 @@
-from PyQt6.QtWidgets import QDialog, QMessageBox
+from PyQt6.QtWidgets import (
+    QDialog,
+    QMessageBox,
+    QFileDialog,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+    QLabel,
+    QTextEdit,
+    QComboBox,
+    QHBoxLayout,
+    QSizePolicy,
+    QSpacerItem,
+)
 from ui.py.export_window import Ui_Dialog
 
 from docx import Document
@@ -12,31 +25,207 @@ class ExportDialog(QDialog):
         super().__init__()
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("Экспорт отчётов")
-        # Подключаем сигнал кнопки Ok для вызова функции create_report
+        self.setWindowTitle("Создание отчётов")
+        self.resize(1280, 960)
+
+        # Поле для ввода имени файла
+        self.file_name_line_edit = QLineEdit(self)
+        self.file_name_line_edit.setPlaceholderText("Введите имя файла")
+
+        # Кнопка выбора пути для файла
+        self.browse_button = QPushButton("Выбрать путь", self)
+        self.browse_button.clicked.connect(self.browse_file)
+
+        # Комбобоксы для фильтров
+        self.filter_combobox_1 = QComboBox(self)
+        self.filter_combobox_1.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
+        self.filter_combobox_1.setMinimumWidth(150)  # Укажите подходящую ширину
+        self.filter_combobox_1.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.filter_combobox_1.currentIndexChanged.connect(self.update_preview)
+
+        self.filter_combobox_2 = QComboBox(self)
+        self.filter_combobox_2.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
+        self.filter_combobox_2.setMinimumWidth(150)  # Укажите подходящую ширину
+        self.filter_combobox_2.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.filter_combobox_2.currentIndexChanged.connect(self.update_preview)
+
+        self.filter_combobox_3 = QComboBox(self)
+        self.filter_combobox_3.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
+        self.filter_combobox_3.setMinimumWidth(150)  # Укажите подходящую ширину
+        self.filter_combobox_3.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.filter_combobox_3.currentIndexChanged.connect(self.update_preview)
+
+        self.filter_combobox_4 = QComboBox(self)
+        self.filter_combobox_4.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
+        self.filter_combobox_4.setMinimumWidth(150)  # Укажите подходящую ширину
+        self.filter_combobox_4.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.filter_combobox_4.currentIndexChanged.connect(self.update_preview)
+
+        self.filter_combobox_5 = QComboBox(self)
+        self.filter_combobox_5.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
+        self.filter_combobox_5.setMinimumWidth(150)  # Укажите подходящую ширину
+        self.filter_combobox_5.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        self.filter_combobox_5.currentIndexChanged.connect(self.update_preview)
+
+        # Кнопки для установки и очистки фильтров
+        self.apply_filters_button = QPushButton("Установить фильтры", self)
+        # self.apply_filters_button.clicked.connect(self.apply_filters)
+
+        self.clear_filters_button = QPushButton("Очистить фильтры", self)
+        # self.clear_filters_button.clicked.connect(self.clear_filters)
+
+        # Поле предпросмотра
+        self.preview_area = QTextEdit(self)
+        self.preview_area.setReadOnly(True)
+        self.preview_area.setPlainText("Здесь будет предварительный просмотр отчета.")
+
+        # Основной макет
+        main_layout = QVBoxLayout()
+
+        # Макет для выбора имени файла и кнопки выбора пути
+        file_layout = QHBoxLayout()
+        file_layout.addWidget(QLabel("Имя файла:"))
+        file_layout.addWidget(self.file_name_line_edit)
+        file_layout.addWidget(self.browse_button)
+
+        # Лейбл и комбобоксы для фильтров
+        filter_box = QVBoxLayout()
+        filter_box.addWidget(QLabel("Фильтры"))
+        filter_box.addWidget(self.filter_combobox_1)
+        filter_box.addWidget(self.filter_combobox_2)
+        filter_box.addWidget(self.filter_combobox_3)
+        filter_box.addWidget(self.filter_combobox_4)
+        filter_box.addWidget(self.filter_combobox_5)
+
+        # Отступ между фильтрами и кнопками
+        filter_box.addSpacerItem(
+            QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        )
+
+        # Макет для кнопок установки и очистки фильтров
+        filter_buttons_layout = QHBoxLayout()
+        filter_buttons_layout.addWidget(self.apply_filters_button)
+        filter_buttons_layout.addWidget(self.clear_filters_button)
+
+        # Добавление кнопок в макет с фильтрами
+        filter_box.addLayout(filter_buttons_layout)
+        filter_box.addSpacerItem(
+            QSpacerItem(
+                20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding
+            )
+        )
+
+        # Макет для фильтров и предпросмотра рядом друг с другом
+        preview_layout = QHBoxLayout()
+        preview_layout.addLayout(filter_box)  # Добавляем фильтры слева
+        preview_layout.addWidget(self.preview_area)  # Предпросмотр справа
+
+        # Установка политики размера для предпросмотра
+        self.preview_area.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+
+        # Макет для кнопок сохранения и отмены
+        button_layout = QHBoxLayout()
+        button_layout.addSpacerItem(
+            QSpacerItem(
+                40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+            )
+        )
+        button_layout.addWidget(self.ui.pushButton_save)
+        button_layout.addWidget(self.ui.pushButton_cancel)
+
+        # Добавление всех макетов в основной
+        main_layout.addLayout(file_layout)
+        main_layout.addLayout(preview_layout)
+        main_layout.addLayout(button_layout)
+
+        # Применяем основной макет
+        self.setLayout(main_layout)
+
+        # Подключение кнопок к функциям
         self.ui.pushButton_save.clicked.connect(self.create_report)
-        self.ui.pushButton_cancel.clicked.connect(self.close)
+        self.ui.pushButton_cancel.clicked.connect(self.confirm_close)
+
+    def browse_file(self):
+        default_file_name = self.file_name_line_edit.text()
+        file_name, _ = QFileDialog.getSaveFileName(
+            self,
+            "Сохранить файл",
+            default_file_name,
+            "Документы Word (*.docx);;Все файлы (*)",
+        )
+        if file_name:
+            # Полный путь сохраняем в атрибут
+            self.file_path = file_name
+            name_only = file_name.split("/")[-1]
+            self.file_name_line_edit.setText(name_only)
+
+    def update_preview(self):
+        selected_filter = (
+            self.filter_combobox_1.currentText()
+            and self.filter_combobox_2.currentText()
+            and self.filter_combobox_3.currentText()
+            and self.filter_combobox_4.currentText()
+            and self.filter_combobox_5.currentText()
+        )
+        self.preview_area.setPlainText(f"Предпросмотр для: {selected_filter}")
+
+    def confirm_close(self):
+        if (
+            self.filter_combobox_1.currentIndex() != 0
+            or self.filter_combobox_2.currentIndex() != 0
+            or self.filter_combobox_3.currentIndex() != 0
+            or self.filter_combobox_4.currentIndex() != 0
+            or self.filter_combobox_5.currentIndex() != 0
+        ):
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Подтверждение")
+            msg_box.setText(
+                "Вы действительно хотите закрыть окно? Все изменения будут потеряны."
+            )
+            yes_button = msg_box.addButton("Да", QMessageBox.ButtonRole.YesRole)
+            msg_box.addButton("Нет", QMessageBox.ButtonRole.NoRole)
+            msg_box.exec()
+            if msg_box.clickedButton() == yes_button:
+                self.close()
+        else:
+            self.close()
 
     def create_report(self):
-        make_report()  # Вызов функции make_report, которая определена ниже
-        self.show_notification(
-            "Отчёт успешно сохранён в папку DB!"
-        )  # Показываем уведомление
+        file_path = getattr(self, "file_path", "").strip()
+        if not file_path:
+            self.show_notification("Пожалуйста, выберите файл и путь для сохранения.")
+            return
+        try:
+            if not file_path.endswith(".docx"):
+                file_path += ".docx"
+            print(f"Сохраняем отчёт в: {file_path}")
+            make_report(file_path)
+            self.show_notification("Отчёт успешно сохранён!")
+        except Exception as e:
+            self.show_notification(f"Ошибка при сохранении отчета: {e}")
 
     def show_notification(self, message):
-        # Создаём всплывающее сообщение
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Уведомление")
         msg_box.setText(message)
         msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
-
-        # Устанавливаем фиксированную высоту
-        msg_box.setFixedHeight(500)  # Установите нужную высоту
-
-        msg_box.exec()  # Показываем сообщение пользователю
+        msg_box.setFixedHeight(500)
+        msg_box.exec()
 
 
-def make_report():
+def make_report(file_path):
     with Session() as session:
         rows = session.query(Pivot).all()
 
@@ -99,9 +288,9 @@ def make_report():
         table.style = "Table Grid"
         set_table_width(table)
 
-        doc.save("DB/Сводная таблица.docx")
+        doc.save(file_path)
 
-    print("Отчет успешно создан и сохранен как report.docx.")
+    print("Отчет успешно создан и сохранен.")
 
 
 def set_table_width(table):
