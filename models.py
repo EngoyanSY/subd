@@ -1,6 +1,7 @@
 from typing import Optional, Dict
 import os
 import numpy as np
+
 from pydantic import BaseModel
 
 # from src.windows.export import make_report
@@ -25,6 +26,7 @@ from schema import (
     Nir_NTP,
     Nir_Templan,
     Nir_VUZ,
+    Nir_GRNTI,
 )
 from core import Session
 
@@ -93,6 +95,8 @@ metadata_obj = MetaData()
 
 
 def create_sql_tables():
+    if not (os.path.isdir("DB")):
+        os.mkdir("DB")
     if not (os.path.isfile("DB/DataBase.sqlite")):
         engine = create_engine("sqlite:///DB/DataBase.sqlite", echo=False)
         metadata_obj.drop_all(engine)
@@ -101,10 +105,12 @@ def create_sql_tables():
         ntp_table = NTP()
         tp_table = Templan()
         vuz_table = VUZ()
+        grnti_table = GRNTI()
         pivot_table = Pivot()
         gr_table.create_table()
         ntp_table.create_table()
         tp_table.create_table()
+        grnti_table.create_table()
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
@@ -121,7 +127,7 @@ class BaseTable(DeclarativeBase):
         # Считывает xlsx файл
         # Переименовывает столбцы и заменяет отсуттвующие данные на None
         # Построчно валидирует данные через Pydantic и вносит их в таблицу
-        data = pd.read_excel(os.path.join("DB", self._schema.table_name))
+        data = pd.read_excel(os.path.join("data", self._schema.table_name))
         data = data.rename(
             columns=dict(zip(data.columns, list(self._schema.model_fields)))
         )
@@ -262,6 +268,17 @@ class VUZ(BaseTable):
         Column("full_name", String),
         Column("gr_ved", String),
         Column("profile", String),
+    )
+
+
+class GRNTI(BaseTable):
+    _schema = Nir_GRNTI
+    __table__ = Table(
+        "grnti",
+        metadata_obj,
+        Column("UniqueID", Integer, primary_key=True),
+        Column("codrub", String),
+        Column("rubrika", String),
     )
 
 
