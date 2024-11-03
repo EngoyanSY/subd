@@ -18,6 +18,7 @@ from docx import Document
 from docx.shared import Pt, Inches
 from core import Session
 from models import Pivot
+import os
 
 
 class ExportDialog(QDialog):
@@ -208,6 +209,17 @@ class ExportDialog(QDialog):
             self.show_notification("Пожалуйста, выберите файл и путь для сохранения.")
             return
         try:
+            # Проверка доступности файла
+            if os.path.exists(file_path):
+                try:
+                    with open(file_path, "r+"):
+                        pass
+                except IOError:
+                    self.show_notification(
+                        "Файл уже используется. Закройте его перед записью."
+                    )
+                    return
+
             if not file_path.endswith(".docx"):
                 file_path += ".docx"
             print(f"Сохраняем отчёт в: {file_path}")
