@@ -217,13 +217,11 @@ class MainWindow(QMainWindow):
                 .all()
             )
             vuz = {
-                "name": set([v[0] for v in vuz]),
-                "city": set([v[1] for v in vuz]),
-                "region": set([v[2] for v in vuz]),
-                "federation_subject": set([v[3] for v in vuz]),
+                "name": sorted(list(set([v[0] for v in vuz]))),
+                "city": sorted(list(set([v[1] for v in vuz]))),
+                "region": sorted(list(set([v[2] for v in vuz]))),
+                "federation_subject": sorted(list(set([v[3] for v in vuz]))),
             }
-            if "vuz_name" not in filters_vuz:
-                vuz["name"].add(" ")
             grnti_codes = (
                 session.execute(NTP().filter(filter_cond=filters_vuz))
                 .columns("grnti_code")
