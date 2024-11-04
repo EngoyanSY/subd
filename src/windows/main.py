@@ -7,7 +7,7 @@ from src.windows.about import AboutDialog
 from src.windows.export import ExportDialog
 from ui.py.main_window import Ui_MainWindow
 from src.align_delegate import AlignDelegate
-from models import VUZ, Grant, NTP, Templan, Pivot, BaseTable
+from models import VUZ, Grant, NTP, Templan, Pivot, BaseTable, GRNTI
 from core import Session
 
 
@@ -109,6 +109,13 @@ class MainWindow(QMainWindow):
             "total_sum": "Общая сумма",
         }
 
+    @property
+    def grnti_column_names(self):
+        return {
+            "codrub": "Код рубрики",
+            "rubrika": "Наименование рубрики",
+        }
+
     def setup_actions(self):
         about_action = QAction("О программе", self)
         about_action.triggered.connect(self.open_about)
@@ -160,6 +167,7 @@ class MainWindow(QMainWindow):
             "nir_ntp": self.nir_ntp_column_names,
             "nir_templan": self.nir_templan_column_names,
             "pivot": self.pivot_column_names,
+            "grnti": self.grnti_column_names,
         }
 
         return table_column_properties.get(table_name, {})
@@ -178,6 +186,7 @@ class MainWindow(QMainWindow):
         self.table_ntp = self.create_table_model(NTP, self.ui.tableView_3)
         self.table_templan = self.create_table_model(Templan, self.ui.tableView_4)
         self.pivot = self.create_table_model(Pivot, self.ui.tableView_13)
+        self.grnti = self.create_table_model(GRNTI, self.ui.tableView_14)
 
     def create_table_model(self, table: BaseTable, table_view):
         qt_table = QtSql.QSqlTableModel()
