@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class BaseSchema(BaseModel):
-
     @field_validator("grnti_code", mode="before", check_fields=False)
     def validate_grnti_code(cls, value):
         if isinstance(value, int):
@@ -90,3 +89,17 @@ class Nir_GRNTI(BaseSchema):
         if isinstance(value, int):
             return f"{value:02}"
         return value
+
+
+class Nir_Pivot(BaseSchema):
+    UniqueID: Optional[int] = Field(default=None, primary_key=True, nullable=None)
+    vuz_code: int = Field()
+    vuz_name: str = Field()
+    total_nir_grant_count: int = Field()
+    total_grant_value: int = Field()
+    total_nir_ntp_count: int = Field()
+    total_year_value_plan: int = Field()
+    total_nir_templan_count: int = Field()
+    total_value_plan: int = Field()
+    total_count: int = Field()
+    total_sum: int = Field()

@@ -7,4 +7,4 @@ logs/
 venv/
 venv/*
 DB/*.sqlite
-
+*.docx

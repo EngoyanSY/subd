@@ -17,6 +17,10 @@ from sqlalchemy import (
     func,
     union_all,
     literal_column,
+    and_,
+    or_,
+    desc,
+    asc,
 )
 from sqlalchemy.orm import DeclarativeBase
 import pandas as pd
@@ -27,6 +31,7 @@ from schema import (
     Nir_Templan,
     Nir_VUZ,
     Nir_GRNTI,
+    Nir_Pivot,
 )
 from core import Session
 
@@ -135,10 +140,11 @@ class BaseTable(DeclarativeBase):
         with Session() as session:
             for r in range(data.shape[0]):
                 table_model = self._schema.model_validate(data.iloc[r].to_dict())
-                stmt = insert(self.__table__).values(table_model.dict())
+                stmt = insert(self.__table__).values(table_model.model_dump())
                 session.execute(stmt)
             session.commit()
 
+    # defact
     def select_all(self):
         return str(self.__table__.select().distinct())
 
@@ -148,6 +154,65 @@ class BaseTable(DeclarativeBase):
             if hasattr(self.__table__.c, fil):
                 q = q.filter(getattr(self.__table__.c, fil).like(f"%{cond}%"))
         return q.distinct()
+
+    @classmethod
+    def select_all_json(cls):
+        with Session() as sess:
+            query = select(cls)
+            res = sess.execute(query)
+            result_orm = res.scalars().all()
+            result_dto = tuple(
+                [
+                    cls._schema.model_validate(
+                        row, from_attributes=True
+                    ).model_dump_json()
+                    for row in result_orm
+                ]
+            )
+        return result_dto
+
+    @classmethod
+    def select_filter_sort(cls, filter_cond=None, and_or=None, sort_cond=None):
+        with Session() as sess:
+            query = select(cls)
+            # Фильтр
+            if filter_cond is not None:
+                conditions = []
+                for fil, cond in filter_cond.items():
+                    if hasattr(cls.__table__.c, fil):
+                        conditions.append(
+                            getattr(cls.__table__.c, fil).like(f"%{cond}%")
+                        )
+
+                if and_or == "and":
+                    query = query.where(and_(*conditions))
+                elif and_or == "or":
+                    query = query.where(or_(*conditions))
+                else:
+                    query = query.where(*conditions)
+            # Сортировка
+            if sort_cond is not None:
+                sort_conditions = []
+                for fil, cond in sort_cond.items():
+                    if hasattr(cls.__table__.c, fil):
+                        if cond == "asc":
+                            sort_conditions.append(asc(getattr(cls.__table__.c, fil)))
+                        elif cond == "desc":
+                            sort_conditions.append(desc(getattr(cls.__table__.c, fil)))
+
+                query = query.order_by(*sort_conditions)
+            # В json
+            res = sess.execute(query)
+            result_orm = res.scalars().all()
+            result_dto = tuple(
+                [
+                    cls._schema.model_validate(
+                        row, from_attributes=True
+                    ).model_dump_json()
+                    for row in result_orm
+                ]
+            )
+        return result_dto
 
 
 class Grant(BaseTable):
@@ -283,6 +348,7 @@ class GRNTI(BaseTable):
 
 
 class Pivot(BaseTable):
+    _schema = Nir_Pivot
     __table__ = Table(
         "pivot",
         metadata_obj,
