@@ -151,8 +151,8 @@ class MainWindow(QMainWindow):
         vuz_region = self.ui.obl.currentText()
         if self.ui.obl.currentIndex() != -1:
             self.filter_cond["region"] = vuz_region
-        grnti_code = self.ui.grnti_code.currentText()
-        if self.ui.grnti_code.currentIndex() != -1:
+        grnti_code = self.ui.grnti_code.text()
+        if grnti_code:
             self.filter_cond["grnti_code"] = grnti_code
         self.setupFilters(self.filter_cond)
 
@@ -226,46 +226,11 @@ class MainWindow(QMainWindow):
                 .all()
             )
             vuz = {
-                "name": set([v[0] for v in vuz]),
-                "city": set([v[1] for v in vuz]),
-                "region": set([v[2] for v in vuz]),
-                "federation_subject": set([v[3] for v in vuz]),
+                "name": sorted(list(set([v[0] for v in vuz]))),
+                "city": sorted(list(set([v[1] for v in vuz]))),
+                "region": sorted(list(set([v[2] for v in vuz]))),
+                "federation_subject": sorted(list(set([v[3] for v in vuz]))),
             }
-            if "vuz_name" not in filters_vuz:
-                vuz["name"].add(" ")
-            grnti_codes = (
-                session.execute(NTP().filter(filter_cond=filters_vuz))
-                .columns("grnti_code")
-                .all()
-                + session.execute(Grant().filter(filter_cond=filters_vuz))
-                .columns("grnti_code")
-                .all()
-                + session.execute(Templan().filter(filter_cond=filters_vuz))
-                .columns("grnti_code")
-                .all()
-            )
-
-        grnti_codes_clean = set()
-        for code in map(lambda x: x[0], grnti_codes):
-            if code and code != "???":
-                splitter = ""
-                if ":" in code:
-                    splitter = ":"
-                elif "," in code:
-                    splitter = ","
-                elif ";" in code:
-                    splitter = ";"
-                elif " " in code:
-                    splitter = " "
-                if splitter:
-                    a, b = code.split(splitter)
-                    grnti_codes_clean.add(a.strip())
-                    grnti_codes_clean.add(b.strip())
-                else:
-                    grnti_codes_clean.add(code.strip())
-        grnti_codes_clean = list(
-            set(map(lambda x: x[: min(5, len(x))], grnti_codes_clean))
-        )
         self.ui.vuz.clear()
         self.ui.vuz.addItems(vuz["name"])
         self.ui.city.clear()
@@ -274,8 +239,6 @@ class MainWindow(QMainWindow):
         self.ui.obl.addItems(vuz["region"])
         self.ui.subject.clear()
         self.ui.subject.addItems(vuz["federation_subject"])
-        self.ui.grnti_code.clear()
-        self.ui.grnti_code.addItems(sorted(list(grnti_codes_clean)))
         filter_1, filter_2 = "", ""
         if filters_vuz is not None:
             self.ui.vuz.setCurrentText(
@@ -291,11 +254,6 @@ class MainWindow(QMainWindow):
                 filters_vuz["federation_subject"]
                 if "federation_subject" in filters_vuz
                 else "Субъект Федерации"
-            )
-            self.ui.grnti_code.setCurrentText(
-                filters_vuz["grnti_code"]
-                if "grnti_code" in filters_vuz
-                else "Код ГРНТИ"
             )
             filter_1 = " AND ".join(
                 list(map(lambda x: f"{x[0]} LIKE '{x[1]}'", filters_vuz.items()))

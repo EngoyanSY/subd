@@ -18,6 +18,19 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="6" column="3">
+     <widget class="QComboBox" name="obl">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Регион</string>
+      </property>
+      <property name="placeholderText">
+       <string>Субъект Федерации</string>
+      </property>
+     </widget>
+    </item>
     <item row="6" column="0">
      <widget class="QComboBox" name="vuz">
       <property name="editable">
@@ -26,21 +39,8 @@
       <property name="currentText">
        <string>ВУЗ</string>
       </property>
-      <property name="placeholderText" stdset="0">
+      <property name="placeholderText">
        <string>ВУЗ</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QComboBox" name="city">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>Город</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>Город</string>
       </property>
      </widget>
     </item>
@@ -52,34 +52,8 @@
       <property name="currentText">
        <string>Субъект Федерации</string>
       </property>
-      <property name="placeholderText" stdset="0">
+      <property name="placeholderText">
        <string>Регион</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="4">
-     <widget class="QComboBox" name="grnti_code">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>Код ГРНТИ</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>Код ГРНТИ</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="3">
-     <widget class="QComboBox" name="obl">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>Регион</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>Субъект Федерации</string>
       </property>
      </widget>
     </item>
@@ -95,10 +69,16 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="4">
-     <widget class="QPushButton" name="set_filter">
-      <property name="text">
-       <string>Установить фильтр</string>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="city">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Город</string>
+      </property>
+      <property name="placeholderText">
+       <string>Город</string>
       </property>
      </widget>
     </item>
@@ -106,6 +86,13 @@
      <widget class="QPushButton" name="clear_filter">
       <property name="text">
        <string>Очистить фильтры</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QPushButton" name="set_filter">
+      <property name="text">
+       <string>Установить фильтр</string>
       </property>
      </widget>
     </item>
@@ -259,6 +246,19 @@
       </widget>
      </widget>
     </item>
+    <item row="6" column="4">
+     <widget class="QLineEdit" name="grnti_code">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="placeholderText">
+       <string>Код ГРНТИ</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -271,7 +271,7 @@
      <x>0</x>
      <y>0</y>
      <width>1401</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">
