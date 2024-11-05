@@ -364,3 +364,19 @@ class Pivot(BaseTable):
         Column("total_count", Integer),
         Column("total_sum", Integer),
     )
+
+    @classmethod
+    def total(cls):
+        with Session() as sess:
+            query = select(
+                func.sum(cls.__table__.c.total_nir_grant_count).label("total_nir_grant_count"),
+                func.sum(cls.__table__.c.total_grant_value).label("total_grant_value"),
+                func.sum(cls.__table__.c.total_nir_ntp_count).label("total_nir_ntp_count"),
+                func.sum(cls.__table__.c.total_year_value_plan).label("total_year_value_plan"),
+                func.sum(cls.__table__.c.total_nir_templan_count).label("total_nir_templan_count"),
+                func.sum(cls.__table__.c.total_value_plan).label("total_value_plan"),
+                func.sum(cls.__table__.c.total_count).label("total_count"),
+                func.sum(cls.__table__.c.total_sum).label("total_sum"),
+            )
+            res = sess.execute(query).fetchall()
+        return res[0]
