@@ -17,13 +17,8 @@ class BaseTableModel(QAbstractTableModel):
         self._data = []
         vuz = self.table_class.select_all_json()
         for row in vuz:
-<<<<<<< HEAD
-            self._data.append(list(json.loads(row).values()))
-        self.setFilter(filters)
-=======
             self._data.append(list(row.values()))
-        self._filtered_data = self._data.copy()
->>>>>>> 1299fb8d3dfe197dbd2b0b76fbe123b0867a0133
+        self.setFilter(filters)
     
 
     def columnCount(self, parent=QModelIndex()):
