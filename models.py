@@ -119,7 +119,6 @@ def create_sql_tables():
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
-        # make_report()
         print("База данных DataBase.sqlite создана и подключена")
     else:
         print("База данных DataBase.sqlite подключена")
@@ -165,7 +164,7 @@ class BaseTable(DeclarativeBase):
                 [
                     cls._schema.model_validate(
                         row, from_attributes=True
-                    ).model_dump_json()
+                    ).model_dump()
                     for row in result_orm
                 ]
             )
@@ -201,14 +200,14 @@ class BaseTable(DeclarativeBase):
                             sort_conditions.append(desc(getattr(cls.__table__.c, fil)))
 
                 query = query.order_by(*sort_conditions)
-            # В json
+            # В dict
             res = sess.execute(query)
             result_orm = res.scalars().all()
-            result_dto = tuple(
+            result_dto =tuple(
                 [
                     cls._schema.model_validate(
                         row, from_attributes=True
-                    ).model_dump_json()
+                    ).model_dump()
                     for row in result_orm
                 ]
             )

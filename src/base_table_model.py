@@ -17,7 +17,7 @@ class BaseTableModel(QAbstractTableModel):
         self._data = []
         vuz = self.table_class.select_all_json()
         for row in vuz:
-            self._data.append(list(json.loads(row).values()))
+            self._data.append(list(row.values()))
         self._filtered_data = self._data.copy()
     
 
