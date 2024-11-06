@@ -1,7 +1,6 @@
 from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
-from PyQt6.QtCore import Qt
 
 from src.windows.about import AboutDialog
 from src.windows.export import PivotExportDialog
@@ -95,55 +94,59 @@ class MainWindow(QMainWindow):
         self.ui.tableView.setEditTriggers(self.ui.tableView.EditTrigger.NoEditTriggers)
         self.ui.tableView.resizeColumnsToContents()
 
-        
         vuz_delegate = AlignDelegate(table_name="vuz")
         self.ui.tableView.setItemDelegate(vuz_delegate)
 
         self.table_grant = GrantTableModel()
         self.ui.tableView_2.setModel(self.table_grant)
-        self.ui.tableView_2.setEditTriggers(self.ui.tableView_2.EditTrigger.NoEditTriggers)
+        self.ui.tableView_2.setEditTriggers(
+            self.ui.tableView_2.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_2.resizeColumnsToContents()
 
-        
         grant_delegate = AlignDelegate(table_name="grant")
         self.ui.tableView_2.setItemDelegate(grant_delegate)
 
         self.table_ntp = NTPTableModel()
         self.ui.tableView_3.setModel(self.table_ntp)
-        self.ui.tableView_3.setEditTriggers(self.ui.tableView_3.EditTrigger.NoEditTriggers)
+        self.ui.tableView_3.setEditTriggers(
+            self.ui.tableView_3.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_3.resizeColumnsToContents()
 
-        
         ntp_delegate = AlignDelegate(table_name="ntp")
         self.ui.tableView_3.setItemDelegate(ntp_delegate)
 
         self.table_templan = TemplanTableModel()
         self.ui.tableView_4.setModel(self.table_templan)
-        self.ui.tableView_4.setEditTriggers(self.ui.tableView_4.EditTrigger.NoEditTriggers)
+        self.ui.tableView_4.setEditTriggers(
+            self.ui.tableView_4.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_4.resizeColumnsToContents()
 
-        
         templan_delegate = AlignDelegate(table_name="templan")
         self.ui.tableView_4.setItemDelegate(templan_delegate)
 
         self.pivot = PivotTableModel()
         self.ui.tableView_13.setModel(self.pivot)
-        self.ui.tableView_13.setEditTriggers(self.ui.tableView_13.EditTrigger.NoEditTriggers)
+        self.ui.tableView_13.setEditTriggers(
+            self.ui.tableView_13.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_13.resizeColumnsToContents()
 
-        
         pivot_delegate = AlignDelegate(table_name="pivot")
         self.ui.tableView_13.setItemDelegate(pivot_delegate)
 
         self.grnti = GRNTITableModel()
         self.ui.tableView_14.setModel(self.grnti)
-        self.ui.tableView_14.setEditTriggers(self.ui.tableView_14.EditTrigger.NoEditTriggers)
+        self.ui.tableView_14.setEditTriggers(
+            self.ui.tableView_14.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_14.resizeColumnsToContents()
 
         # Применение делегата для "grnti"
         grnti_delegate = AlignDelegate(table_name="grnti")
         self.ui.tableView_14.setItemDelegate(grnti_delegate)
-
 
     def setupFilters(self, filters_vuz={}):
         with Session() as session:
@@ -192,8 +195,6 @@ class MainWindow(QMainWindow):
         self.ui.tableView_2.model().setFilter(filter_2)
         self.ui.tableView_3.model().setFilter(filter_2)
         self.ui.tableView_4.model().setFilter(filter_2)
-
-
 
     def open_about(self):
         self.about_window = AboutDialog()
