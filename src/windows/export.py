@@ -181,7 +181,7 @@ class PivotExportDialog(BaseExportDialog):
 def make_report(file_path):
     with Session() as session:
         rows = session.query(Pivot).all()
-
+        total = Pivot.total()
         doc = Document()
         doc.add_heading("Отчет из совдной таблицы", level=1)
         table = doc.add_table(rows=1, cols=len(Pivot.__table__.columns))
@@ -237,6 +237,17 @@ def make_report(file_path):
                     run = paragraph.runs[0]
                     run.font.name = "Times New Roman"
                     run.font.size = Pt(10)
+
+        #Итого
+        total_cells = table.add_row().cells
+        total_cells[0].text = "Итого"
+        for c in range(len(total)):
+            total_cells[c + 3].text = str(total[c])
+
+            for paragraph in total_cells[c + 3].paragraphs:
+                run = paragraph.runs[0]
+                run.font.name = "Times New Roman"
+                run.font.size = Pt(10)
 
         table.style = "Table Grid"
         set_table_width(table)
