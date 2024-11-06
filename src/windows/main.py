@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         self.setup_sorting()
-        
+
         self.setupFilters()
 
     def setup_actions(self):
@@ -40,10 +40,18 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self.open_about)
         self.ui.about.addAction(about_action)
 
-        self.ui.action_5.triggered.connect(self.open_export_subclass(PivotExportDialog))
-        self.ui.action_6.triggered.connect(self.open_export_subclass(PivotExportDialog))
-        self.ui.action_7.triggered.connect(self.open_export_subclass(PivotExportDialog))
-        self.ui.action_8.triggered.connect(self.open_export_subclass(PivotExportDialog))
+        self.ui.action_5.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
+        self.ui.action_6.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
+        self.ui.action_7.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
+        self.ui.action_8.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
@@ -87,27 +95,37 @@ class MainWindow(QMainWindow):
 
         self.table_grant = GrantTableModel()
         self.ui.tableView_2.setModel(self.table_grant)
-        self.ui.tableView_2.setEditTriggers(self.ui.tableView_2.EditTrigger.NoEditTriggers)
+        self.ui.tableView_2.setEditTriggers(
+            self.ui.tableView_2.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_2.resizeColumnsToContents()
 
         self.table_ntp = NTPTableModel()
         self.ui.tableView_3.setModel(self.table_ntp)
-        self.ui.tableView_3.setEditTriggers(self.ui.tableView_3.EditTrigger.NoEditTriggers)
+        self.ui.tableView_3.setEditTriggers(
+            self.ui.tableView_3.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_3.resizeColumnsToContents()
 
         self.table_templan = TemplanTableModel()
         self.ui.tableView_4.setModel(self.table_templan)
-        self.ui.tableView_4.setEditTriggers(self.ui.tableView_4.EditTrigger.NoEditTriggers)
+        self.ui.tableView_4.setEditTriggers(
+            self.ui.tableView_4.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_4.resizeColumnsToContents()
 
         self.pivot = PivotTableModel()
         self.ui.tableView_13.setModel(self.pivot)
-        self.ui.tableView_13.setEditTriggers(self.ui.tableView_13.EditTrigger.NoEditTriggers)    
+        self.ui.tableView_13.setEditTriggers(
+            self.ui.tableView_13.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_13.resizeColumnsToContents()
 
         self.grnti = GRNTITableModel()
         self.ui.tableView_14.setModel(self.grnti)
-        self.ui.tableView_14.setEditTriggers(self.ui.tableView_14.EditTrigger.NoEditTriggers)    
+        self.ui.tableView_14.setEditTriggers(
+            self.ui.tableView_14.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_14.resizeColumnsToContents()
 
     def setup_sorting(self):

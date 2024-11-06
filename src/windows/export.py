@@ -18,7 +18,6 @@ from docx.shared import Pt, Inches
 from core import Session
 from models import Pivot
 from src.base_table_model import MakeModel, PivotModel
-from src.components.pivot_table_models import PivotTableModel
 import os
 
 
@@ -51,12 +50,14 @@ class BaseExportDialog(QDialog):
 
         # Текст фильтров
         self.filter_text = [QLabel(self) for _ in range(len(filter_cond))]
-        for (index, (key, value)) in enumerate(filter_cond.items()):
-            self.filter_text[index].setText(f"{filter_trans[key]}: {value}\n") 
+        for index, (key, value) in enumerate(filter_cond.items()):
+            self.filter_text[index].setText(f"{filter_trans[key]}: {value}\n")
 
         # Поле предпросмотра
         self.preview_area = QTableView(self)
-        self.table_model = self.table_model_class(filter_cond=filter_cond, model=self.report)
+        self.table_model = self.table_model_class(
+            filter_cond=filter_cond, model=self.report
+        )
         self.preview_area.setModel(self.table_model)
 
         # Основной макет
@@ -238,7 +239,7 @@ def make_report(file_path):
                     run.font.name = "Times New Roman"
                     run.font.size = Pt(10)
 
-        #Итого
+        # Итого
         total_cells = table.add_row().cells
         total_cells[0].text = "Итого"
         for c in range(len(total)):

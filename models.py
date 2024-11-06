@@ -162,9 +162,7 @@ class BaseTable(DeclarativeBase):
             result_orm = res.scalars().all()
             result_dto = tuple(
                 [
-                    cls._schema.model_validate(
-                        row, from_attributes=True
-                    ).model_dump()
+                    cls._schema.model_validate(row, from_attributes=True).model_dump()
                     for row in result_orm
                 ]
             )
@@ -203,11 +201,9 @@ class BaseTable(DeclarativeBase):
             # В dict
             res = sess.execute(query)
             result_orm = res.scalars().all()
-            result_dto =tuple(
+            result_dto = tuple(
                 [
-                    cls._schema.model_validate(
-                        row, from_attributes=True
-                    ).model_dump()
+                    cls._schema.model_validate(row, from_attributes=True).model_dump()
                     for row in result_orm
                 ]
             )
@@ -368,11 +364,19 @@ class Pivot(BaseTable):
     def total(cls):
         with Session() as sess:
             query = select(
-                func.sum(cls.__table__.c.total_nir_grant_count).label("total_nir_grant_count"),
+                func.sum(cls.__table__.c.total_nir_grant_count).label(
+                    "total_nir_grant_count"
+                ),
                 func.sum(cls.__table__.c.total_grant_value).label("total_grant_value"),
-                func.sum(cls.__table__.c.total_nir_ntp_count).label("total_nir_ntp_count"),
-                func.sum(cls.__table__.c.total_year_value_plan).label("total_year_value_plan"),
-                func.sum(cls.__table__.c.total_nir_templan_count).label("total_nir_templan_count"),
+                func.sum(cls.__table__.c.total_nir_ntp_count).label(
+                    "total_nir_ntp_count"
+                ),
+                func.sum(cls.__table__.c.total_year_value_plan).label(
+                    "total_year_value_plan"
+                ),
+                func.sum(cls.__table__.c.total_nir_templan_count).label(
+                    "total_nir_templan_count"
+                ),
                 func.sum(cls.__table__.c.total_value_plan).label("total_value_plan"),
                 func.sum(cls.__table__.c.total_count).label("total_count"),
                 func.sum(cls.__table__.c.total_sum).label("total_sum"),

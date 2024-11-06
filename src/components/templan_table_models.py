@@ -17,14 +17,14 @@ class TemplanTableModel(BaseTableModel):
         "Номер НИР",
     ]
     _index_by_col = {
-        "vuz_code": 0, #
-        "vuz_name": 1, #
-        "nir_type": 2, #
+        "vuz_code": 0,  #
+        "vuz_name": 1,  #
+        "nir_type": 2,  #
         "vuz_abb": 3,
-        "nir_director": 5, #
-        "value_plan": 6, #
-        "nir_name": 7, #
-        "director_position": 8, #
-        "nir_reg_number": 9, #
+        "nir_director": 5,  #
+        "value_plan": 6,  #
+        "nir_name": 7,  #
+        "director_position": 8,  #
+        "nir_reg_number": 9,  #
         "grnti_code": 4,  #
     }
