@@ -61,6 +61,7 @@ class MakeModel(QAbstractTableModel):
     _headers = []
     
     def __init__(self, filter_cond={}, model: str = "pivot"):
+        super().__init__()
         self.vuz = VUZ.select_filter_sort(filter_cond=filter_cond)
         self.grant = Grant.select_filter_sort(filter_cond=filter_cond)
         self.templan = Templan.select_filter_sort(filter_cond=filter_cond)
@@ -70,18 +71,17 @@ class MakeModel(QAbstractTableModel):
         self._data = []
         
         if model == "pivot":
-            vuz_names = list(map(lambda x: json.loads(x)["vuz_name"], self.vuz))
+            vuz_names = list(map(lambda x: x["vuz_name"], self.vuz))
             for vuz in self.vuz:
-                vuz = list(json.loads(vuz))
-                grants = filter(lambda x: x["vuz_name"] in vuz_names, json.loads(self.grant))
-                ntp = filter(lambda x: x["vuz_name"] in vuz_names, json.loads(self.ntp))
-                templan = filter(lambda x: x["vuz_name"] in vuz_names, json.loads(self.templan))
+                grants = list(filter(lambda x: x["vuz_name"] == vuz["vuz_name"], self.grant))
+                ntp = list(filter(lambda x: x["vuz_name"]  == vuz["vuz_name"], self.ntp))
+                templan = list(filter(lambda x: x["vuz_name"]  == vuz["vuz_name"], self.templan))
                 value_grant = sum(map(lambda x: x["grant_value"], grants))
                 value_ntp = sum(map(lambda x: x["year_value_plan"], ntp))
                 value_templan = sum(map(lambda x: x["value_plan"], templan))
                 row = [
-                    vuz.vuz_code,
-                    vuz.vuz_name,
+                    vuz["vuz_code"],
+                    vuz["vuz_name"],
                     len(grants),
                     value_grant,
                     len(ntp),
@@ -91,8 +91,8 @@ class MakeModel(QAbstractTableModel):
                     len(grants) + len(ntp) + len(templan),
                     value_ntp + value_grant + value_templan
                 ]
-                
-                self._data.append(row)
+                if row[-1] > 0:
+                    self._data.append(row.copy())
 
     def columnCount(self, parent=QModelIndex()):
         return len(self._headers)
@@ -113,3 +113,18 @@ class MakeModel(QAbstractTableModel):
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
         return None
+
+
+class PivotModel(MakeModel):
+    _headers = [
+        "Код ВУЗа",
+        "Наименование ВУЗа",
+        "Кол-во по грантам",
+        "Сумма по грантам",
+        "Кол-во по НТП",
+        "Сумма по НТП",
+        "Сумма по тем. планам",
+        "Кол-во по тем. планам",
+        "Общее кол-во",
+        "Общая сумма",
+    ]

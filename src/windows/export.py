@@ -17,7 +17,7 @@ from docx import Document
 from docx.shared import Pt, Inches
 from core import Session
 from models import Pivot
-from src.base_table_model import MakeModel
+from src.base_table_model import MakeModel, PivotModel
 from src.components.pivot_table_models import PivotTableModel
 import os
 
@@ -174,7 +174,7 @@ class BaseExportDialog(QDialog):
 
 
 class PivotExportDialog(BaseExportDialog):
-    table_model_class = MakeModel
+    table_model_class = PivotModel
     report = "pivot"
 
 
