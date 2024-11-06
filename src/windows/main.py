@@ -6,9 +6,14 @@ from PyQt6.QtCore import Qt
 from src.windows.about import AboutDialog
 from src.windows.export import ExportDialog
 from ui.py.main_window import Ui_MainWindow
-from src.align_delegate import AlignDelegate
-from models import VUZ, Grant, NTP, Templan, Pivot, BaseTable
+from models import VUZ
 from core import Session
+from src.components.vuz_table_models import VuzTableModel
+from src.components.grant_table_models import GrantTableModel
+from src.components.ntp_table_models import NTPTableModel
+from src.components.templan_table_models import TemplanTableModel
+from src.components.pivot_table_models import PivotTableModel
+from src.components.grnti_table_models import GRNTITableModel
 
 
 class MainWindow(QMainWindow):
@@ -28,86 +33,6 @@ class MainWindow(QMainWindow):
         self.setup_sorting()
         self.filter_cond = {}
         self.setupFilters()
-
-    @property
-    def vuz_column_names(self):
-        return {
-            "vuz_code": "Код",
-            "name": "Наименование",
-            "full_name": "Полное наименование",
-            "vuz_name": "Аббревиатура",
-            "region": "Регион",
-            "city": "Город",
-            "status": "Статус",
-            "fed_sub_code": "Код фед. субъекта",
-            "federation_subject": "Фед. субъект",
-            "gr_ved": "ГР ВЭД",
-            "profile": "Профиль",
-        }
-
-    @property
-    def nir_grant_column_names(self):
-        return {
-            "nir_code": "Код НИР",
-            "kon_code": "Код конкурса",
-            "vuz_code": "Код ВУЗа",
-            "vuz_name": "Наименование ВУЗа",
-            "grnti_code": "Код по ГРНТИ",
-            "grant_value": "Пл. объём гранта",
-            "nir_name": "Наименование НИР",
-            "nir_director": "Руководитель НИР",
-            "director_position": "Должность",
-            "director_academic_title": "Ученое звание",
-            "director_academic_degree": "Ученая степень",
-        }
-
-    @property
-    def nir_ntp_column_names(self):
-        return {
-            "ntp_code": "Код НТП",
-            "nir_number": "Номер НИР",
-            "nir_name": "Наименование НИР",
-            "vuz_code": "Код ВУЗа",
-            "vuz_name": "Наименование ВУЗа",
-            "nir_organization": "Организация-исполнитель НИР",
-            "nir_org_code": "Код организации-исполнителя НИР",
-            "nir_director": "Руководитель НИР",
-            "director_meta": "Должность, Уч. звание, Уч. степень",
-            "grnti_code": "Код ГРНТИ НИР",
-            "nir_type": "Характер НИР",
-            "year_value_plan": "Пл. фин-е текущего года",
-        }
-
-    @property
-    def nir_templan_column_names(self):
-        return {
-            "vuz_name": "Наименование ВУЗа",
-            "vuz_code": "Код ВУЗа",
-            "nir_type": "Характер НИР",
-            "vuz_abb": "Аббревиатура ВУЗа",
-            "nir_director": "Руководитель НИР",
-            "grnti_theme_code": "Код ГРНТИ НИР",
-            "value_plan": "Пл. финансирование",
-            "nir_name": "Наименование НИР",
-            "director_position": "Должность",
-            "nir_reg_number": "Номер НИР",
-            "grnti_code": "Код ГРНТИ НИР",
-        }
-
-    @property
-    def pivot_column_names(self):
-        return {
-            "vuz_code": "Код ВУЗа",
-            "vuz_name": "Наименование ВУЗа",
-            "total_nir_grant_count": "Кол-во по грантам",
-            "total_grant_value": "Сумма по грантам",
-            "total_nir_ntp_count": "Кол-во по НТП",
-            "total_year_value_plan": "Сумма по НТП",
-            "total_value_plan": "Сумма по тем. планам",
-            "total_nir_templan_count": "Кол-во по тем. планам",
-            "total_count": "Общее кол-во",
-            "total_sum": "Общая сумма",
-        }
 
     def setup_actions(self):
         about_action = QAction("О программе", self)
@@ -144,8 +69,8 @@ class MainWindow(QMainWindow):
         vuz_region = self.ui.obl.currentText()
         if self.ui.obl.currentIndex() != -1:
             self.filter_cond["region"] = vuz_region
-        grnti_code = self.ui.grnti_code.currentText()
-        if self.ui.grnti_code.currentIndex() != -1:
+        grnti_code = self.ui.grnti_code.text()
+        if grnti_code:
             self.filter_cond["grnti_code"] = grnti_code
         self.setupFilters(self.filter_cond)
 
@@ -153,57 +78,36 @@ class MainWindow(QMainWindow):
         self.filter_cond = {}
         self.setupFilters(self.filter_cond)
 
-    def get_column_names(self, table_name):
-        table_column_properties = {
-            "vuz": self.vuz_column_names,
-            "nir_grant": self.nir_grant_column_names,
-            "nir_ntp": self.nir_ntp_column_names,
-            "nir_templan": self.nir_templan_column_names,
-            "pivot": self.pivot_column_names,
-        }
-
-        return table_column_properties.get(table_name, {})
-
-    def rename_table_columns(self, table_name, qt_table):
-        column_names = self.get_column_names(table_name)
-
-        for old_name, new_name in column_names.items():
-            col_index = qt_table.fieldIndex(old_name)
-            if col_index != -1:
-                qt_table.setHeaderData(col_index, Qt.Orientation.Horizontal, new_name)
-
     def setup_table_models(self):
-        self.table_vuz = self.create_table_model(VUZ, self.ui.tableView)
-        self.table_grant = self.create_table_model(Grant, self.ui.tableView_2)
-        self.table_ntp = self.create_table_model(NTP, self.ui.tableView_3)
-        self.table_templan = self.create_table_model(Templan, self.ui.tableView_4)
-        self.pivot = self.create_table_model(Pivot, self.ui.tableView_13)
+        self.table_vuz = VuzTableModel()
+        self.ui.tableView.setModel(self.table_vuz)
+        self.ui.tableView.setEditTriggers(self.ui.tableView.EditTrigger.NoEditTriggers)
+        self.ui.tableView.resizeColumnsToContents()
 
-    def create_table_model(self, table: BaseTable, table_view):
-        qt_table = QtSql.QSqlTableModel()
-        qt_table.setTable(table.__table__.name)
-        qt_table.setEditStrategy(QtSql.QSqlTableModel.EditStrategy.OnManualSubmit)
-        qt_table.select()
+        self.table_grant = GrantTableModel()
+        self.ui.tableView_2.setModel(self.table_grant)
+        self.ui.tableView_2.setEditTriggers(self.ui.tableView_2.EditTrigger.NoEditTriggers)
+        self.ui.tableView_2.resizeColumnsToContents()
 
-        column_index = qt_table.fieldIndex("UniqueID")
+        self.table_ntp = NTPTableModel()
+        self.ui.tableView_3.setModel(self.table_ntp)
+        self.ui.tableView_3.setEditTriggers(self.ui.tableView_3.EditTrigger.NoEditTriggers)
+        self.ui.tableView_3.resizeColumnsToContents()
 
-        header = table_view.horizontalHeader()
-        header.setSectionsClickable(True)
-        header.setSortIndicatorShown(True)
-        header.sectionClicked.connect(self.sort_table)
+        self.table_templan = TemplanTableModel()
+        self.ui.tableView_4.setModel(self.table_templan)
+        self.ui.tableView_4.setEditTriggers(self.ui.tableView_4.EditTrigger.NoEditTriggers)
+        self.ui.tableView_4.resizeColumnsToContents()
 
-        if column_index != -1:
-            qt_table.removeColumn(column_index)
+        self.pivot = PivotTableModel()
+        self.ui.tableView_13.setModel(self.pivot)
+        self.ui.tableView_13.setEditTriggers(self.ui.tableView_13.EditTrigger.NoEditTriggers)    
+        self.ui.tableView_13.resizeColumnsToContents()
 
-        self.rename_table_columns(table.__table__.name, qt_table)
-
-        delegate = AlignDelegate(table.__table__.name, table_view)
-        table_view.setItemDelegate(delegate)
-
-        table_view.setModel(qt_table)
-        table_view.setEditTriggers(table_view.EditTrigger.NoEditTriggers)
-        table_view.resizeColumnsToContents()
-        return qt_table
+        self.grnti = GRNTITableModel()
+        self.ui.tableView_14.setModel(self.grnti)
+        self.ui.tableView_14.setEditTriggers(self.ui.tableView_14.EditTrigger.NoEditTriggers)    
+        self.ui.tableView_14.resizeColumnsToContents()
 
     def setup_sorting(self):
         self.current_sort_column = None
@@ -217,46 +121,11 @@ class MainWindow(QMainWindow):
                 .all()
             )
             vuz = {
-                "name": set([v[0] for v in vuz]),
-                "city": set([v[1] for v in vuz]),
-                "region": set([v[2] for v in vuz]),
-                "federation_subject": set([v[3] for v in vuz]),
+                "name": sorted(list(set([v[0] for v in vuz]))),
+                "city": sorted(list(set([v[1] for v in vuz]))),
+                "region": sorted(list(set([v[2] for v in vuz]))),
+                "federation_subject": sorted(list(set([v[3] for v in vuz]))),
             }
-            if "vuz_name" not in filters_vuz:
-                vuz["name"].add(" ")
-            grnti_codes = (
-                session.execute(NTP().filter(filter_cond=filters_vuz))
-                .columns("grnti_code")
-                .all()
-                + session.execute(Grant().filter(filter_cond=filters_vuz))
-                .columns("grnti_code")
-                .all()
-                + session.execute(Templan().filter(filter_cond=filters_vuz))
-                .columns("grnti_code")
-                .all()
-            )
-
-        grnti_codes_clean = set()
-        for code in map(lambda x: x[0], grnti_codes):
-            if code and code != "???":
-                splitter = ""
-                if ":" in code:
-                    splitter = ":"
-                elif "," in code:
-                    splitter = ","
-                elif ";" in code:
-                    splitter = ";"
-                elif " " in code:
-                    splitter = " "
-                if splitter:
-                    a, b = code.split(splitter)
-                    grnti_codes_clean.add(a.strip())
-                    grnti_codes_clean.add(b.strip())
-                else:
-                    grnti_codes_clean.add(code.strip())
-        grnti_codes_clean = list(
-            set(map(lambda x: x[: min(5, len(x))], grnti_codes_clean))
-        )
         self.ui.vuz.clear()
         self.ui.vuz.addItems(vuz["name"])
         self.ui.city.clear()
@@ -265,9 +134,7 @@ class MainWindow(QMainWindow):
         self.ui.obl.addItems(vuz["region"])
         self.ui.subject.clear()
         self.ui.subject.addItems(vuz["federation_subject"])
-        self.ui.grnti_code.clear()
-        self.ui.grnti_code.addItems(sorted(list(grnti_codes_clean)))
-        filter_1, filter_2 = "", ""
+        filter_2 = {}
         if filters_vuz is not None:
             self.ui.vuz.setCurrentText(
                 filters_vuz["vuz_name"] if "vuz_name" in filters_vuz else "ВУЗ"
@@ -283,30 +150,15 @@ class MainWindow(QMainWindow):
                 if "federation_subject" in filters_vuz
                 else "Субъект Федерации"
             )
-            self.ui.grnti_code.setCurrentText(
-                filters_vuz["grnti_code"]
-                if "grnti_code" in filters_vuz
-                else "Код ГРНТИ"
-            )
-            filter_1 = " AND ".join(
-                list(map(lambda x: f"{x[0]} LIKE '{x[1]}'", filters_vuz.items()))
-            )
-            filter_2 = " OR ".join(list(map(lambda x: f"vuz_name='{x}'", vuz["name"])))
+            filter_2 = {"vuz_name": vuz["name"]}
             if "grnti_code" in filters_vuz:
-                filter_2 = (
-                    f"({filter_2}) AND grnti_code LIKE '{filters_vuz['grnti_code']}%'"
-                )
-
-        self.ui.tableView.model().setFilter(filter_1)
-        self.ui.tableView.model().select()
+                filter_2["grnti_code"] = filters_vuz["grnti_code"]
+                del filters_vuz["grnti_code"]
+        self.ui.tableView.model().setFilter(filters_vuz)
         self.ui.tableView_13.model().setFilter(filter_2)
-        self.ui.tableView_13.model().select()
         self.ui.tableView_2.model().setFilter(filter_2)
-        self.ui.tableView_2.model().select()
         self.ui.tableView_3.model().setFilter(filter_2)
-        self.ui.tableView_3.model().select()
         self.ui.tableView_4.model().setFilter(filter_2)
-        self.ui.tableView_4.model().select()
 
     def sort_table(self, index):
         table_view = self.sender().parent()

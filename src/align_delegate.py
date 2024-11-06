@@ -18,6 +18,9 @@ class AlignDelegate(QStyledItemDelegate):
             else:
                 option.displayAlignment = Qt.AlignmentFlag.AlignCenter
         elif isinstance(data, str) and len(data) <= 30:
-            option.displayAlignment = Qt.AlignmentFlag.AlignCenter
+            if self.table_name == "grnti":
+                option.displayAlignment = Qt.AlignmentFlag.AlignLeft
+            else:
+                option.displayAlignment = Qt.AlignmentFlag.AlignCenter
         else:
             option.displayAlignment = Qt.AlignmentFlag.AlignLeft

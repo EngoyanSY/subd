@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1603</width>
-    <height>1408</height>
+    <width>1401</width>
+    <height>1136</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,10 +18,67 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="7" column="4">
-     <widget class="QPushButton" name="set_filter">
+    <item row="6" column="3">
+     <widget class="QComboBox" name="obl">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Регион</string>
+      </property>
+      <property name="placeholderText">
+       <string>Субъект Федерации</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QComboBox" name="vuz">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>ВУЗ</string>
+      </property>
+      <property name="placeholderText">
+       <string>ВУЗ</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="2">
+     <widget class="QComboBox" name="subject">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Субъект Федерации</string>
+      </property>
+      <property name="placeholderText">
+       <string>Регион</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>Установить фильтр</string>
+       <string>Таблицы данных</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="city">
+      <property name="editable">
+       <bool>true</bool>
+      </property>
+      <property name="currentText">
+       <string>Город</string>
+      </property>
+      <property name="placeholderText">
+       <string>Город</string>
       </property>
      </widget>
     </item>
@@ -29,6 +86,13 @@
      <widget class="QPushButton" name="clear_filter">
       <property name="text">
        <string>Очистить фильтры</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4">
+     <widget class="QPushButton" name="set_filter">
+      <property name="text">
+       <string>Установить фильтр</string>
       </property>
      </widget>
     </item>
@@ -52,7 +116,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>5</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -147,7 +211,7 @@
       </widget>
       <widget class="QWidget" name="tab_5">
        <attribute name="title">
-        <string>Сводка</string>
+        <string>Сводка по ВУЗам</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_14">
         <item row="0" column="0">
@@ -161,81 +225,36 @@
         </item>
        </layout>
       </widget>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_5">
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Таблицы данных</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0">
-     <widget class="QComboBox" name="vuz">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>ВУЗ</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>ВУЗ</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="3">
-     <widget class="QComboBox" name="obl">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>Регион</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>Субъект Федерации</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QComboBox" name="city">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>Город</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>Город</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="2">
-     <widget class="QComboBox" name="subject">
-      <property name="editable">
-       <bool>true</bool>
-      </property>
-      <property name="currentText">
-       <string>Субъект Федерации</string>
-      </property>
-      <property name="placeholderText" stdset="0">
-       <string>Регион</string>
-      </property>
+      <widget class="QWidget" name="tab_6">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <attribute name="title">
+        <string>Рубрики ГРНТИ</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QTableView" name="tableView_14">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item row="6" column="4">
-     <widget class="QComboBox" name="grnti_code">
-      <property name="editable">
-       <bool>true</bool>
+     <widget class="QLineEdit" name="grnti_code">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="currentText">
-       <string>Код ГРНТИ</string>
-      </property>
-      <property name="placeholderText" stdset="0">
+      <property name="placeholderText">
        <string>Код ГРНТИ</string>
       </property>
      </widget>
@@ -251,8 +270,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1603</width>
-     <height>21</height>
+     <width>1401</width>
+     <height>22</height>
     </rect>
    </property>
    <property name="defaultUp">
