@@ -684,8 +684,3 @@ def total(result):
         ]
     )
     return totals
-
-
-data = select_vuz_pivot()
-for row in data:
-    print(row["vuz_name"])
