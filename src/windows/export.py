@@ -183,10 +183,21 @@ class PivotExportDialog(BaseExportDialog):
     report = "pivot"
 
 
-def make_report(file_path):
-    data = select_vuz_pivot()
+def make_report(file_path, filter_cond={}):
+    data = select_vuz_pivot(filter_cond)
     doc = Document()
+
     doc.add_heading("Отчет из совдной таблицы", level=1)
+    doc.add_heading("Фильтры:", level=2)
+
+    if 'vuz_name' in filter_cond:
+        doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
+    if 'city' in filter_cond:
+        doc.add_paragraph(f"Регион: {filter_cond['city']}")
+    if 'federation_subject' in filter_cond:
+        doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
+    if 'region' in filter_cond:
+        doc.add_paragraph(f"Регион: {filter_cond['region']}")
     table = doc.add_table(rows=1, cols=10)
 
     # Настройка полей страницы
@@ -219,7 +230,6 @@ def make_report(file_path):
             run.font.size = Pt(10)  # размер шрифта 10
         paragraph.paragraph_format.space_after = 0
 
-    data = select_vuz_pivot()
     for row in data:
         print(row.values())
 
