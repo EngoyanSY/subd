@@ -45,10 +45,13 @@ class BaseTableModel(QAbstractTableModel):
         self._filtered_data = self._data.copy()
         for key, value in filters.items():
             index = self._index_by_col[key]
-            print(key, index)
             if isinstance(value, str):
-                value = [value]
-            self._filtered_data = [
-                row for row in self._filtered_data if row[index + 1] in value
-            ]
+                print(value)
+                self._filtered_data = [
+                    row for row in self._filtered_data if str(row[index + 1]).startswith(value)
+                ]
+            else:
+                self._filtered_data = [
+                    row for row in self._filtered_data if row[index + 1] in value
+                ]
         self.layoutChanged.emit()

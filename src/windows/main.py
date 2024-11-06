@@ -151,11 +151,12 @@ class MainWindow(QMainWindow):
                 else "Субъект Федерации"
             )
             filter_2 = {"vuz_name": vuz["name"]}
+            filter_3 = filter_2.copy()
             if "grnti_code" in filters_vuz:
                 filter_2["grnti_code"] = filters_vuz["grnti_code"]
                 del filters_vuz["grnti_code"]
         self.ui.tableView.model().setFilter(filters_vuz)
-        self.ui.tableView_13.model().setFilter(filter_2)
+        self.ui.tableView_13.model().setFilter(filter_3)
         self.ui.tableView_2.model().setFilter(filter_2)
         self.ui.tableView_3.model().setFilter(filter_2)
         self.ui.tableView_4.model().setFilter(filter_2)
