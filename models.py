@@ -535,12 +535,8 @@ def select_vuz_pivot(filter_cond=None):
             func.sum(combined.c.nir_grant_count).label("total_nir_grant_count"),
             func.sum(combined.c.total_grant_value).label("total_grant_value"),
             func.sum(combined.c.nir_ntp_count).label("total_nir_ntp_count"),
-            func.sum(combined.c.total_year_value_plan).label(
-                "total_year_value_plan"
-            ),
-            func.sum(combined.c.nir_templan_count).label(
-                "total_nir_templan_count"
-            ),
+            func.sum(combined.c.total_year_value_plan).label("total_year_value_plan"),
+            func.sum(combined.c.nir_templan_count).label("total_nir_templan_count"),
             func.sum(combined.c.total_value_plan).label("total_value_plan"),
             func.sum(combined.c.nir_grant_count)
             + func.sum(combined.c.nir_ntp_count)
@@ -551,20 +547,22 @@ def select_vuz_pivot(filter_cond=None):
         ).group_by(combined.c.vuz_code, combined.c.vuz_name)
 
         result = sess.execute(final_query).all()
-        
-        #refact
-        totals = tuple([
-            "Итого",
-            "",
-            sum(item[-8] for item in result),
-            sum(item[-7] for item in result),
-            sum(item[-6] for item in result),
-            sum(item[-5] for item in result),
-            sum(item[-4] for item in result),
-            sum(item[-3] for item in result),
-            sum(item[-2] for item in result),
-            sum(item[-1] for item in result),
-        ])
+
+        # refact
+        totals = tuple(
+            [
+                "Итого",
+                "",
+                sum(item[-8] for item in result),
+                sum(item[-7] for item in result),
+                sum(item[-6] for item in result),
+                sum(item[-5] for item in result),
+                sum(item[-4] for item in result),
+                sum(item[-3] for item in result),
+                sum(item[-2] for item in result),
+                sum(item[-1] for item in result),
+            ]
+        )
         result.append(totals)
 
         fields = [
@@ -670,8 +668,10 @@ def select_status_pivot(filter_cond=None):
 
         return result_dto
 
+
 def total(result):
-    totals = tuple([
+    totals = tuple(
+        [
             "Итого",
             sum(item[-8] for item in result),
             sum(item[-7] for item in result),
@@ -681,7 +681,9 @@ def total(result):
             sum(item[-3] for item in result),
             sum(item[-2] for item in result),
             sum(item[-1] for item in result),
-        ])
+        ]
+    )
     return totals
+
 
 print(select_vuz_pivot())
