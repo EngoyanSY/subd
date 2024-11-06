@@ -15,16 +15,15 @@ from ui.py.export_window import Ui_Dialog
 
 from docx import Document
 from docx.shared import Pt, Inches
-from core import Session
-from models import Pivot
 from src.base_table_model import MakeModel, PivotModel
 import os
 
 from models import (
     select_vuz_pivot,
-    select_status_pivot,
-    select_region_pivot
+    # select_status_pivot,
+    # select_region_pivot
 )
+
 
 class BaseExportDialog(QDialog):
     table_model_class = MakeModel
