@@ -551,7 +551,22 @@ def select_vuz_pivot(filter_cond=None):
         ).group_by(combined.c.vuz_code, combined.c.vuz_name)
 
         result = sess.execute(final_query).all()
-        result.append(total(result))
+        
+        #refact
+        totals = tuple([
+            "Итого",
+            "",
+            sum(item[-8] for item in result),
+            sum(item[-7] for item in result),
+            sum(item[-6] for item in result),
+            sum(item[-5] for item in result),
+            sum(item[-4] for item in result),
+            sum(item[-3] for item in result),
+            sum(item[-2] for item in result),
+            sum(item[-1] for item in result),
+        ])
+        result.append(totals)
+
         fields = [
             "vuz_code",
             "vuz_name",
@@ -668,3 +683,5 @@ def total(result):
             sum(item[-1] for item in result),
         ])
     return totals
+
+print(select_vuz_pivot())
