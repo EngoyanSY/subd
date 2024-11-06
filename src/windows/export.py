@@ -190,13 +190,13 @@ def make_report(file_path, filter_cond={}):
     doc.add_heading("Отчет из совдной таблицы", level=1)
     doc.add_heading("Фильтры:", level=2)
 
-    if 'vuz_name' in filter_cond:
+    if "vuz_name" in filter_cond:
         doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
-    if 'city' in filter_cond:
+    if "city" in filter_cond:
         doc.add_paragraph(f"Регион: {filter_cond['city']}")
-    if 'federation_subject' in filter_cond:
+    if "federation_subject" in filter_cond:
         doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
-    if 'region' in filter_cond:
+    if "region" in filter_cond:
         doc.add_paragraph(f"Регион: {filter_cond['region']}")
     table = doc.add_table(rows=1, cols=10)
 
