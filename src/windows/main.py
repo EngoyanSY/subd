@@ -4,7 +4,7 @@ from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt
 
 from src.windows.about import AboutDialog
-from src.windows.export import ExportDialog
+from src.windows.export import PivotExportDialog
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
 from core import Session
@@ -19,6 +19,7 @@ from src.components.grnti_table_models import GRNTITableModel
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.filter_cond = {}
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_actions()
@@ -31,7 +32,7 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         self.setup_sorting()
-        self.filter_cond = {}
+        
         self.setupFilters()
 
     def setup_actions(self):
@@ -39,10 +40,10 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self.open_about)
         self.ui.about.addAction(about_action)
 
-        self.ui.action_5.triggered.connect(self.open_export)
-        self.ui.action_6.triggered.connect(self.open_export)
-        self.ui.action_7.triggered.connect(self.open_export)
-        self.ui.action_8.triggered.connect(self.open_export)
+        self.ui.action_5.triggered.connect(self.open_export_subclass(PivotExportDialog))
+        self.ui.action_6.triggered.connect(self.open_export_subclass(PivotExportDialog))
+        self.ui.action_7.triggered.connect(self.open_export_subclass(PivotExportDialog))
+        self.ui.action_8.triggered.connect(self.open_export_subclass(PivotExportDialog))
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
@@ -181,6 +182,9 @@ class MainWindow(QMainWindow):
         self.about_window = AboutDialog()
         self.about_window.show()
 
-    def open_export(self):
-        self.export_window = ExportDialog()
-        self.export_window.show()
+    def open_export_subclass(self, export_window_class):
+        def open_export():
+            self.export_window = export_window_class(self.filter_cond)
+            self.export_window.show()
+
+        return open_export

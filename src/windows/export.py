@@ -6,8 +6,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QLabel,
-    QTextEdit,
-    QComboBox,
+    QTableView,
     QHBoxLayout,
     QSizePolicy,
     QSpacerItem,
@@ -18,13 +17,26 @@ from docx import Document
 from docx.shared import Pt, Inches
 from core import Session
 from models import Pivot
+from src.base_table_model import MakeModel
+from src.components.pivot_table_models import PivotTableModel
 import os
 
 
-class ExportDialog(QDialog):
-    def __init__(self):
+class BaseExportDialog(QDialog):
+    table_model_class = MakeModel
+    report = "pivot"
+
+    def __init__(self, filter_cond={}):
         super().__init__()
         self.ui = Ui_Dialog()
+        filter_trans = {
+            "region": "Регион",
+            "city": "Город",
+            "vuz_name": "ВУЗ",
+            "federation_subject": "Субъект федерации",
+            "grnti_code": "Код ГРНТИ",
+        }
+        self.file_path = ""
         self.ui.setupUi(self)
         self.setWindowTitle("Создание отчётов")
         self.resize(1280, 720)
@@ -37,58 +49,15 @@ class ExportDialog(QDialog):
         self.browse_button = QPushButton("Выбрать путь", self)
         self.browse_button.clicked.connect(self.browse_file)
 
-        # Комбобоксы для фильтров
-        self.filter_combobox_1 = QComboBox(self)
-        self.filter_combobox_1.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
-        self.filter_combobox_1.setMinimumWidth(150)  # Укажите подходящую ширину
-        self.filter_combobox_1.setSizeAdjustPolicy(
-            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
-        )
-        self.filter_combobox_1.currentIndexChanged.connect(self.update_preview)
-
-        self.filter_combobox_2 = QComboBox(self)
-        self.filter_combobox_2.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
-        self.filter_combobox_2.setMinimumWidth(150)  # Укажите подходящую ширину
-        self.filter_combobox_2.setSizeAdjustPolicy(
-            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
-        )
-        self.filter_combobox_2.currentIndexChanged.connect(self.update_preview)
-
-        self.filter_combobox_3 = QComboBox(self)
-        self.filter_combobox_3.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
-        self.filter_combobox_3.setMinimumWidth(150)  # Укажите подходящую ширину
-        self.filter_combobox_3.setSizeAdjustPolicy(
-            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
-        )
-        self.filter_combobox_3.currentIndexChanged.connect(self.update_preview)
-
-        self.filter_combobox_4 = QComboBox(self)
-        self.filter_combobox_4.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
-        self.filter_combobox_4.setMinimumWidth(150)  # Укажите подходящую ширину
-        self.filter_combobox_4.setSizeAdjustPolicy(
-            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
-        )
-        self.filter_combobox_4.currentIndexChanged.connect(self.update_preview)
-
-        self.filter_combobox_5 = QComboBox(self)
-        self.filter_combobox_5.addItems(["Фильтр 1", "Фильтр 2", "Фильтр 3"])
-        self.filter_combobox_5.setMinimumWidth(150)  # Укажите подходящую ширину
-        self.filter_combobox_5.setSizeAdjustPolicy(
-            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
-        )
-        self.filter_combobox_5.currentIndexChanged.connect(self.update_preview)
-
-        # Кнопки для установки и очистки фильтров
-        self.apply_filters_button = QPushButton("Установить фильтры", self)
-        # self.apply_filters_button.clicked.connect(self.apply_filters)
-
-        self.clear_filters_button = QPushButton("Очистить фильтры", self)
-        # self.clear_filters_button.clicked.connect(self.clear_filters)
+        # Текст фильтров
+        self.filter_text = [QLabel(self) for _ in range(len(filter_cond))]
+        for (index, (key, value)) in enumerate(filter_cond.items()):
+            self.filter_text[index].setText(f"{filter_trans[key]}: {value}\n") 
 
         # Поле предпросмотра
-        self.preview_area = QTextEdit(self)
-        self.preview_area.setReadOnly(True)
-        self.preview_area.setPlainText("Здесь будет предварительный просмотр отчета.")
+        self.preview_area = QTableView(self)
+        self.table_model = self.table_model_class(filter_cond=filter_cond, model=self.report)
+        self.preview_area.setModel(self.table_model)
 
         # Основной макет
         main_layout = QVBoxLayout()
@@ -99,14 +68,11 @@ class ExportDialog(QDialog):
         file_layout.addWidget(self.file_name_line_edit)
         file_layout.addWidget(self.browse_button)
 
-        # Лейбл и комбобоксы для фильтров
+        # Лейбл и фильтрs
         filter_box = QVBoxLayout()
         filter_box.addWidget(QLabel("Фильтры"))
-        filter_box.addWidget(self.filter_combobox_1)
-        filter_box.addWidget(self.filter_combobox_2)
-        filter_box.addWidget(self.filter_combobox_3)
-        filter_box.addWidget(self.filter_combobox_4)
-        filter_box.addWidget(self.filter_combobox_5)
+        for ft in self.filter_text:
+            filter_box.addWidget(ft)
 
         # Отступ между фильтрами и кнопками
         filter_box.addSpacerItem(
@@ -115,8 +81,6 @@ class ExportDialog(QDialog):
 
         # Макет для кнопок установки и очистки фильтров
         filter_buttons_layout = QHBoxLayout()
-        filter_buttons_layout.addWidget(self.apply_filters_button)
-        filter_buttons_layout.addWidget(self.clear_filters_button)
 
         # Добавление кнопок в макет с фильтрами
         filter_box.addLayout(filter_buttons_layout)
@@ -172,39 +136,11 @@ class ExportDialog(QDialog):
             name_only = file_name.split("/")[-1]
             self.file_name_line_edit.setText(name_only)
 
-    def update_preview(self):
-        selected_filter = (
-            self.filter_combobox_1.currentText()
-            and self.filter_combobox_2.currentText()
-            and self.filter_combobox_3.currentText()
-            and self.filter_combobox_4.currentText()
-            and self.filter_combobox_5.currentText()
-        )
-        self.preview_area.setPlainText(f"Предпросмотр для: {selected_filter}")
-
     def confirm_close(self):
-        if (
-            self.filter_combobox_1.currentIndex() != 0
-            or self.filter_combobox_2.currentIndex() != 0
-            or self.filter_combobox_3.currentIndex() != 0
-            or self.filter_combobox_4.currentIndex() != 0
-            or self.filter_combobox_5.currentIndex() != 0
-        ):
-            msg_box = QMessageBox(self)
-            msg_box.setWindowTitle("Подтверждение")
-            msg_box.setText(
-                "Вы действительно хотите закрыть окно? Все изменения будут потеряны."
-            )
-            yes_button = msg_box.addButton("Да", QMessageBox.ButtonRole.YesRole)
-            msg_box.addButton("Нет", QMessageBox.ButtonRole.NoRole)
-            msg_box.exec()
-            if msg_box.clickedButton() == yes_button:
-                self.close()
-        else:
-            self.close()
+        self.close()
 
     def create_report(self):
-        file_path = getattr(self, "file_path", "").strip()
+        file_path = self.file_path.strip()
         if not file_path:
             self.show_notification("Пожалуйста, выберите файл и путь для сохранения.")
             return
@@ -235,6 +171,11 @@ class ExportDialog(QDialog):
         msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
         msg_box.setFixedHeight(500)
         msg_box.exec()
+
+
+class PivotExportDialog(BaseExportDialog):
+    table_model_class = MakeModel
+    report = "pivot"
 
 
 def make_report(file_path):
