@@ -27,7 +27,7 @@ class ExportDialog(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.setWindowTitle("Создание отчётов")
-        self.resize(1280, 960)
+        self.resize(1280, 720)
 
         # Поле для ввода имени файла
         self.file_name_line_edit = QLineEdit(self)
