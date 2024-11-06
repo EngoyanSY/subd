@@ -383,3 +383,244 @@ class Pivot(BaseTable):
             )
             res = sess.execute(query).fetchall()
         return res[0]
+
+def select_region_pivot(filter_cond = None):
+    conditions = []
+    if filter_cond is not None:
+        for fil, cond in filter_cond.items():
+            if hasattr(VUZ, fil):
+                conditions.append(
+                    getattr(VUZ, fil).like(cond)
+                )
+    with Session() as sess:
+        # Subquery for nir_grant
+        subquery_grant = (
+            select(
+                VUZ.region,
+                func.count(Grant.nir_code).label('nir_grant_count'),
+                func.sum(Grant.grant_value).label('total_grant_value'),
+                literal_column("0").label('nir_ntp_count'),
+                literal_column("0").label('total_year_value_plan'),
+                literal_column("0").label('nir_templan_count'),
+                literal_column("0").label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.region)
+        )
+        
+        # Subquery for nir_ntp
+        subquery_ntp = (
+            select(
+                VUZ.region,
+                literal_column("0").label('nir_grant_count'),
+                literal_column("0").label('total_grant_value'),
+                func.count(NTP.nir_number).label('nir_ntp_count'),
+                func.sum(NTP.year_value_plan).label('total_year_value_plan'),
+                literal_column("0").label('nir_templan_count'),
+                literal_column("0").label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.region)
+        )
+
+        # Subquery for nir_templan
+        subquery_templan = (
+            select(
+                VUZ.region,
+                literal_column("0").label('nir_grant_count'),
+                literal_column("0").label('total_grant_value'),
+                literal_column("0").label('nir_ntp_count'),
+                literal_column("0").label('total_year_value_plan'),
+                func.count(Templan.nir_reg_number).label('nir_templan_count'),
+                func.sum(Templan.value_plan).label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.region)
+        )
+        
+        # Combine the subqueries
+        combined = union_all(subquery_grant, subquery_ntp, subquery_templan)
+
+        # Final query to aggregate results
+        final_query = (
+            select(
+                combined.c.region,
+                func.sum(combined.c.nir_grant_count).label('total_nir_grant_count'),
+                func.sum(combined.c.total_grant_value).label('total_grant_value'),
+                func.sum(combined.c.nir_ntp_count).label('total_nir_ntp_count'),
+                func.sum(combined.c.total_year_value_plan).label('total_year_value_plan'),
+                func.sum(combined.c.nir_templan_count).label('total_nir_templan_count'),
+                func.sum(combined.c.total_value_plan).label('total_value_plan')
+            )
+            .group_by(combined.c.region)
+        )
+
+        # Execute the query
+        # Assuming you have a session created
+        result = sess.execute(final_query).all()
+        return result
+
+def select_vuz_pivot(filter_cond = None):
+    conditions = []
+    if filter_cond is not None:
+        for fil, cond in filter_cond.items():
+            if hasattr(VUZ, fil):
+                conditions.append(
+                    getattr(VUZ, fil).like(cond)
+                )
+    with Session() as sess:
+        # Subquery for nir_grant
+        subquery_grant = (
+            select(
+                VUZ.vuz_code,
+                VUZ.vuz_name,
+                func.count(Grant.nir_code).label('nir_grant_count'),
+                func.sum(Grant.grant_value).label('total_grant_value'),
+                literal_column("0").label('nir_ntp_count'),
+                literal_column("0").label('total_year_value_plan'),
+                literal_column("0").label('nir_templan_count'),
+                literal_column("0").label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.vuz_code,VUZ.vuz_name)
+        )
+        
+        # Subquery for nir_ntp
+        subquery_ntp = (
+            select(
+                VUZ.vuz_code,
+                VUZ.vuz_name,
+                literal_column("0").label('nir_grant_count'),
+                literal_column("0").label('total_grant_value'),
+                func.count(NTP.nir_number).label('nir_ntp_count'),
+                func.sum(NTP.year_value_plan).label('total_year_value_plan'),
+                literal_column("0").label('nir_templan_count'),
+                literal_column("0").label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.vuz_code,VUZ.vuz_name)
+        )
+
+        # Subquery for nir_templan
+        subquery_templan = (
+            select(
+                VUZ.vuz_code,
+                VUZ.vuz_name,
+                literal_column("0").label('nir_grant_count'),
+                literal_column("0").label('total_grant_value'),
+                literal_column("0").label('nir_ntp_count'),
+                literal_column("0").label('total_year_value_plan'),
+                func.count(Templan.nir_reg_number).label('nir_templan_count'),
+                func.sum(Templan.value_plan).label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.vuz_code,VUZ.vuz_name)
+        )
+        
+        # Combine the subqueries
+        combined = union_all(subquery_grant, subquery_ntp, subquery_templan)
+
+        # Final query to aggregate results
+        final_query = (
+            select(
+                combined.c.vuz_code,
+                combined.c.vuz_name,
+                func.sum(combined.c.nir_grant_count).label('total_nir_grant_count'),
+                func.sum(combined.c.total_grant_value).label('total_grant_value'),
+                func.sum(combined.c.nir_ntp_count).label('total_nir_ntp_count'),
+                func.sum(combined.c.total_year_value_plan).label('total_year_value_plan'),
+                func.sum(combined.c.nir_templan_count).label('total_nir_templan_count'),
+                func.sum(combined.c.total_value_plan).label('total_value_plan')
+            )
+            .group_by(combined.c.vuz_code,combined.c.vuz_name)
+        )
+
+        # Execute the query
+        # Assuming you have a session created
+        result = sess.execute(final_query).all()
+        return result
+
+def select_status_pivot(filter_cond = None):
+    conditions = []
+    if filter_cond is not None:
+        for fil, cond in filter_cond.items():
+            if hasattr(VUZ, fil):
+                conditions.append(
+                    getattr(VUZ, fil).like(cond)
+                )
+    with Session() as sess:
+        # Subquery for nir_grant
+        subquery_grant = (
+            select(
+                VUZ.status,
+                func.count(Grant.nir_code).label('nir_grant_count'),
+                func.sum(Grant.grant_value).label('total_grant_value'),
+                literal_column("0").label('nir_ntp_count'),
+                literal_column("0").label('total_year_value_plan'),
+                literal_column("0").label('nir_templan_count'),
+                literal_column("0").label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.status)
+        )
+        
+        # Subquery for nir_ntp
+        subquery_ntp = (
+            select(
+                VUZ.status,
+                literal_column("0").label('nir_grant_count'),
+                literal_column("0").label('total_grant_value'),
+                func.count(NTP.nir_number).label('nir_ntp_count'),
+                func.sum(NTP.year_value_plan).label('total_year_value_plan'),
+                literal_column("0").label('nir_templan_count'),
+                literal_column("0").label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.status)
+        )
+
+        # Subquery for nir_templan
+        subquery_templan = (
+            select(
+                VUZ.status,
+                literal_column("0").label('nir_grant_count'),
+                literal_column("0").label('total_grant_value'),
+                literal_column("0").label('nir_ntp_count'),
+                literal_column("0").label('total_year_value_plan'),
+                func.count(Templan.nir_reg_number).label('nir_templan_count'),
+                func.sum(Templan.value_plan).label('total_value_plan')
+            )
+            .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
+            .where(and_(*conditions))
+            .group_by(VUZ.status)
+        )
+        
+        # Combine the subqueries
+        combined = union_all(subquery_grant, subquery_ntp, subquery_templan)
+
+        # Final query to aggregate results
+        final_query = (
+            select(
+                combined.c.status,
+                func.sum(combined.c.nir_grant_count).label('total_nir_grant_count'),
+                func.sum(combined.c.total_grant_value).label('total_grant_value'),
+                func.sum(combined.c.nir_ntp_count).label('total_nir_ntp_count'),
+                func.sum(combined.c.total_year_value_plan).label('total_year_value_plan'),
+                func.sum(combined.c.nir_templan_count).label('total_nir_templan_count'),
+                func.sum(combined.c.total_value_plan).label('total_value_plan')
+            )
+            .group_by(combined.c.status)
+        )
+
+        # Execute the query
+        # Assuming you have a session created
+        result = sess.execute(final_query).all()
+        return result
