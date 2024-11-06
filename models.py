@@ -447,10 +447,16 @@ def select_region_pivot(filter_cond=None):
             func.sum(combined.c.total_year_value_plan).label("total_year_value_plan"),
             func.sum(combined.c.nir_templan_count).label("total_nir_templan_count"),
             func.sum(combined.c.total_value_plan).label("total_value_plan"),
+            func.sum(combined.c.nir_grant_count)
+            + func.sum(combined.c.nir_ntp_count)
+            + func.sum(combined.c.nir_templan_count).label("total_count"),
+            func.sum(combined.c.total_grant_value)
+            + func.sum(combined.c.total_year_value_plan)
+            + func.sum(combined.c.total_value_plan).label("total_sum"),
         ).group_by(combined.c.region)
 
         result = sess.execute(final_query).all()
-
+        result.append(total(result))
         fields = [
             "region",
             "total_nir_grant_count",
@@ -459,6 +465,8 @@ def select_region_pivot(filter_cond=None):
             "total_year_value_plan",
             "total_nir_templan_count",
             "total_value_plan",
+            "total_count",
+            "total_sum",
         ]
         result_dto = [dict(zip(fields, item)) for item in result]
         return result_dto
@@ -527,13 +535,23 @@ def select_vuz_pivot(filter_cond=None):
             func.sum(combined.c.nir_grant_count).label("total_nir_grant_count"),
             func.sum(combined.c.total_grant_value).label("total_grant_value"),
             func.sum(combined.c.nir_ntp_count).label("total_nir_ntp_count"),
-            func.sum(combined.c.total_year_value_plan).label("total_year_value_plan"),
-            func.sum(combined.c.nir_templan_count).label("total_nir_templan_count"),
+            func.sum(combined.c.total_year_value_plan).label(
+                "total_year_value_plan"
+            ),
+            func.sum(combined.c.nir_templan_count).label(
+                "total_nir_templan_count"
+            ),
             func.sum(combined.c.total_value_plan).label("total_value_plan"),
+            func.sum(combined.c.nir_grant_count)
+            + func.sum(combined.c.nir_ntp_count)
+            + func.sum(combined.c.nir_templan_count).label("total_count"),
+            func.sum(combined.c.total_grant_value)
+            + func.sum(combined.c.total_year_value_plan)
+            + func.sum(combined.c.total_value_plan).label("total_sum"),
         ).group_by(combined.c.vuz_code, combined.c.vuz_name)
 
         result = sess.execute(final_query).all()
-
+        result.append(total(result))
         fields = [
             "vuz_code",
             "vuz_name",
@@ -543,6 +561,8 @@ def select_vuz_pivot(filter_cond=None):
             "total_year_value_plan",
             "total_nir_templan_count",
             "total_value_plan",
+            "total_count",
+            "total_sum",
         ]
         result_dto = [dict(zip(fields, item)) for item in result]
         return result_dto
@@ -610,10 +630,16 @@ def select_status_pivot(filter_cond=None):
             func.sum(combined.c.total_year_value_plan).label("total_year_value_plan"),
             func.sum(combined.c.nir_templan_count).label("total_nir_templan_count"),
             func.sum(combined.c.total_value_plan).label("total_value_plan"),
+            func.sum(combined.c.nir_grant_count)
+            + func.sum(combined.c.nir_ntp_count)
+            + func.sum(combined.c.nir_templan_count).label("total_count"),
+            func.sum(combined.c.total_grant_value)
+            + func.sum(combined.c.total_year_value_plan)
+            + func.sum(combined.c.total_value_plan).label("total_sum"),
         ).group_by(combined.c.status)
 
         result = sess.execute(final_query).all()
-
+        result.append(total(result))
         fields = [
             "status",
             "total_nir_grant_count",
@@ -622,6 +648,23 @@ def select_status_pivot(filter_cond=None):
             "total_year_value_plan",
             "total_nir_templan_count",
             "total_value_plan",
+            "total_count",
+            "total_sum",
         ]
         result_dto = [dict(zip(fields, item)) for item in result]
+
         return result_dto
+
+def total(result):
+    totals = tuple([
+            "Итого",
+            sum(item[-8] for item in result),
+            sum(item[-7] for item in result),
+            sum(item[-6] for item in result),
+            sum(item[-5] for item in result),
+            sum(item[-4] for item in result),
+            sum(item[-3] for item in result),
+            sum(item[-2] for item in result),
+            sum(item[-1] for item in result),
+        ])
+    return totals
