@@ -4,7 +4,7 @@ from PyQt6.QtGui import QAction
 from PyQt6.QtCore import Qt
 
 from src.windows.about import AboutDialog
-from src.windows.export import ExportDialog
+from src.windows.export import PivotExportDialog
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
 from core import Session
@@ -19,6 +19,7 @@ from src.components.grnti_table_models import GRNTITableModel
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.filter_cond = {}
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setup_actions()
@@ -31,7 +32,7 @@ class MainWindow(QMainWindow):
         self.showMaximized()
 
         self.setup_sorting()
-        self.filter_cond = {}
+
         self.setupFilters()
 
     def setup_actions(self):
@@ -39,10 +40,18 @@ class MainWindow(QMainWindow):
         about_action.triggered.connect(self.open_about)
         self.ui.about.addAction(about_action)
 
-        self.ui.action_5.triggered.connect(self.open_export)
-        self.ui.action_6.triggered.connect(self.open_export)
-        self.ui.action_7.triggered.connect(self.open_export)
-        self.ui.action_8.triggered.connect(self.open_export)
+        self.ui.action_5.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
+        self.ui.action_6.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
+        self.ui.action_7.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
+        self.ui.action_8.triggered.connect(
+            self.open_export_subclass(PivotExportDialog)
+        )
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
@@ -86,27 +95,37 @@ class MainWindow(QMainWindow):
 
         self.table_grant = GrantTableModel()
         self.ui.tableView_2.setModel(self.table_grant)
-        self.ui.tableView_2.setEditTriggers(self.ui.tableView_2.EditTrigger.NoEditTriggers)
+        self.ui.tableView_2.setEditTriggers(
+            self.ui.tableView_2.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_2.resizeColumnsToContents()
 
         self.table_ntp = NTPTableModel()
         self.ui.tableView_3.setModel(self.table_ntp)
-        self.ui.tableView_3.setEditTriggers(self.ui.tableView_3.EditTrigger.NoEditTriggers)
+        self.ui.tableView_3.setEditTriggers(
+            self.ui.tableView_3.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_3.resizeColumnsToContents()
 
         self.table_templan = TemplanTableModel()
         self.ui.tableView_4.setModel(self.table_templan)
-        self.ui.tableView_4.setEditTriggers(self.ui.tableView_4.EditTrigger.NoEditTriggers)
+        self.ui.tableView_4.setEditTriggers(
+            self.ui.tableView_4.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_4.resizeColumnsToContents()
 
         self.pivot = PivotTableModel()
         self.ui.tableView_13.setModel(self.pivot)
-        self.ui.tableView_13.setEditTriggers(self.ui.tableView_13.EditTrigger.NoEditTriggers)    
+        self.ui.tableView_13.setEditTriggers(
+            self.ui.tableView_13.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_13.resizeColumnsToContents()
 
         self.grnti = GRNTITableModel()
         self.ui.tableView_14.setModel(self.grnti)
-        self.ui.tableView_14.setEditTriggers(self.ui.tableView_14.EditTrigger.NoEditTriggers)    
+        self.ui.tableView_14.setEditTriggers(
+            self.ui.tableView_14.EditTrigger.NoEditTriggers
+        )
         self.ui.tableView_14.resizeColumnsToContents()
 
     def setup_sorting(self):
@@ -151,11 +170,12 @@ class MainWindow(QMainWindow):
                 else "Субъект Федерации"
             )
             filter_2 = {"vuz_name": vuz["name"]}
+            filter_3 = filter_2.copy()
             if "grnti_code" in filters_vuz:
                 filter_2["grnti_code"] = filters_vuz["grnti_code"]
                 del filters_vuz["grnti_code"]
         self.ui.tableView.model().setFilter(filters_vuz)
-        self.ui.tableView_13.model().setFilter(filter_2)
+        self.ui.tableView_13.model().setFilter(filter_3)
         self.ui.tableView_2.model().setFilter(filter_2)
         self.ui.tableView_3.model().setFilter(filter_2)
         self.ui.tableView_4.model().setFilter(filter_2)
@@ -180,6 +200,9 @@ class MainWindow(QMainWindow):
         self.about_window = AboutDialog()
         self.about_window.show()
 
-    def open_export(self):
-        self.export_window = ExportDialog()
-        self.export_window.show()
+    def open_export_subclass(self, export_window_class):
+        def open_export():
+            self.export_window = export_window_class(self.filter_cond)
+            self.export_window.show()
+
+        return open_export

@@ -119,7 +119,6 @@ def create_sql_tables():
         vuz_table.create_table()
 
         create_pivot(gr_table, ntp_table, tp_table, pivot_table)
-        # make_report()
         print("База данных DataBase.sqlite создана и подключена")
     else:
         print("База данных DataBase.sqlite подключена")
@@ -163,9 +162,7 @@ class BaseTable(DeclarativeBase):
             result_orm = res.scalars().all()
             result_dto = tuple(
                 [
-                    cls._schema.model_validate(
-                        row, from_attributes=True
-                    ).model_dump_json()
+                    cls._schema.model_validate(row, from_attributes=True).model_dump()
                     for row in result_orm
                 ]
             )
@@ -201,14 +198,12 @@ class BaseTable(DeclarativeBase):
                             sort_conditions.append(desc(getattr(cls.__table__.c, fil)))
 
                 query = query.order_by(*sort_conditions)
-            # В json
+            # В dict
             res = sess.execute(query)
             result_orm = res.scalars().all()
             result_dto = tuple(
                 [
-                    cls._schema.model_validate(
-                        row, from_attributes=True
-                    ).model_dump_json()
+                    cls._schema.model_validate(row, from_attributes=True).model_dump()
                     for row in result_orm
                 ]
             )
@@ -364,3 +359,27 @@ class Pivot(BaseTable):
         Column("total_count", Integer),
         Column("total_sum", Integer),
     )
+
+    @classmethod
+    def total(cls):
+        with Session() as sess:
+            query = select(
+                func.sum(cls.__table__.c.total_nir_grant_count).label(
+                    "total_nir_grant_count"
+                ),
+                func.sum(cls.__table__.c.total_grant_value).label("total_grant_value"),
+                func.sum(cls.__table__.c.total_nir_ntp_count).label(
+                    "total_nir_ntp_count"
+                ),
+                func.sum(cls.__table__.c.total_year_value_plan).label(
+                    "total_year_value_plan"
+                ),
+                func.sum(cls.__table__.c.total_nir_templan_count).label(
+                    "total_nir_templan_count"
+                ),
+                func.sum(cls.__table__.c.total_value_plan).label("total_value_plan"),
+                func.sum(cls.__table__.c.total_count).label("total_count"),
+                func.sum(cls.__table__.c.total_sum).label("total_sum"),
+            )
+            res = sess.execute(query).fetchall()
+        return res[0]

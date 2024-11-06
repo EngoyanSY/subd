@@ -5,6 +5,7 @@ from models import Pivot
 class PivotTableModel(BaseTableModel):
     table_class = Pivot
     _headers_by_ind = [
+        "",
         "Код ВУЗа",
         "Наименование ВУЗа",
         "Кол-во по грантам",

@@ -1,6 +1,7 @@
 from models import VUZ
 from src.base_table_model import BaseTableModel
 
+
 class VuzTableModel(BaseTableModel):
     # TODO поправить по порядку
     _headers_by_ind = [
