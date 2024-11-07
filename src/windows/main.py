@@ -1,7 +1,6 @@
 from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
-from PyQt6.QtCore import Qt
 
 from src.windows.about import AboutDialog
 from src.windows.export import PivotExportDialog
@@ -14,6 +13,7 @@ from src.components.ntp_table_models import NTPTableModel
 from src.components.templan_table_models import TemplanTableModel
 from src.components.pivot_table_models import PivotTableModel
 from src.components.grnti_table_models import GRNTITableModel
+from src.align_delegate import AlignDelegate
 
 
 class MainWindow(QMainWindow):
@@ -88,10 +88,14 @@ class MainWindow(QMainWindow):
         self.setupFilters(self.filter_cond)
 
     def setup_table_models(self):
+        # Создание моделей
         self.table_vuz = VuzTableModel()
         self.ui.tableView.setModel(self.table_vuz)
         self.ui.tableView.setEditTriggers(self.ui.tableView.EditTrigger.NoEditTriggers)
         self.ui.tableView.resizeColumnsToContents()
+
+        vuz_delegate = AlignDelegate(table_name="vuz")
+        self.ui.tableView.setItemDelegate(vuz_delegate)
 
         self.table_grant = GrantTableModel()
         self.ui.tableView_2.setModel(self.table_grant)
@@ -100,12 +104,18 @@ class MainWindow(QMainWindow):
         )
         self.ui.tableView_2.resizeColumnsToContents()
 
+        grant_delegate = AlignDelegate(table_name="grant")
+        self.ui.tableView_2.setItemDelegate(grant_delegate)
+
         self.table_ntp = NTPTableModel()
         self.ui.tableView_3.setModel(self.table_ntp)
         self.ui.tableView_3.setEditTriggers(
             self.ui.tableView_3.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_3.resizeColumnsToContents()
+
+        ntp_delegate = AlignDelegate(table_name="ntp")
+        self.ui.tableView_3.setItemDelegate(ntp_delegate)
 
         self.table_templan = TemplanTableModel()
         self.ui.tableView_4.setModel(self.table_templan)
@@ -114,12 +124,18 @@ class MainWindow(QMainWindow):
         )
         self.ui.tableView_4.resizeColumnsToContents()
 
+        templan_delegate = AlignDelegate(table_name="templan")
+        self.ui.tableView_4.setItemDelegate(templan_delegate)
+
         self.pivot = PivotTableModel()
         self.ui.tableView_13.setModel(self.pivot)
         self.ui.tableView_13.setEditTriggers(
             self.ui.tableView_13.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_13.resizeColumnsToContents()
+
+        pivot_delegate = AlignDelegate(table_name="pivot")
+        self.ui.tableView_13.setItemDelegate(pivot_delegate)
 
         self.grnti = GRNTITableModel()
         self.ui.tableView_14.setModel(self.grnti)
@@ -128,9 +144,9 @@ class MainWindow(QMainWindow):
         )
         self.ui.tableView_14.resizeColumnsToContents()
 
-    def setup_sorting(self):
-        self.current_sort_column = None
-        self.current_sort_order = Qt.SortOrder.DescendingOrder
+        # Применение делегата для "grnti"
+        grnti_delegate = AlignDelegate(table_name="grnti")
+        self.ui.tableView_14.setItemDelegate(grnti_delegate)
 
     def setupFilters(self, filters_vuz={}):
         with Session() as session:
@@ -179,22 +195,6 @@ class MainWindow(QMainWindow):
         self.ui.tableView_2.model().setFilter(filter_2)
         self.ui.tableView_3.model().setFilter(filter_2)
         self.ui.tableView_4.model().setFilter(filter_2)
-
-    def sort_table(self, index):
-        table_view = self.sender().parent()
-        model = table_view.model()
-
-        if self.current_sort_column == index:
-            self.current_sort_order = (
-                Qt.SortOrder.DescendingOrder
-                if self.current_sort_order == Qt.SortOrder.AscendingOrder
-                else Qt.SortOrder.AscendingOrder
-            )
-        else:
-            self.current_sort_column = index
-            self.current_sort_order = Qt.SortOrder.DescendingOrder
-
-        model.sort(self.current_sort_column, self.current_sort_order)
 
     def open_about(self):
         self.about_window = AboutDialog()
