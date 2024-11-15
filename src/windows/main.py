@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         self.setupFilters()
 
     def setup_actions(self):
-        about_action = QAction("О программе", self)
+        about_action = QAction("Документация", self)
         about_action.triggered.connect(self.open_about)
         self.ui.about.addAction(about_action)
 
