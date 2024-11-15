@@ -1,6 +1,7 @@
 from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
+from PyQt6.QtCore import Qt
 
 from src.windows.about import AboutDialog
 from src.windows.export import PivotExportDialog
@@ -93,7 +94,7 @@ class MainWindow(QMainWindow):
         self.ui.tableView.setModel(self.table_vuz)
         self.ui.tableView.setEditTriggers(self.ui.tableView.EditTrigger.NoEditTriggers)
         self.ui.tableView.resizeColumnsToContents()
-
+        self.ui.tableView.horizontalHeader().sectionClicked.connect(self.sort_table)
         vuz_delegate = AlignDelegate(table_name="vuz")
         self.ui.tableView.setItemDelegate(vuz_delegate)
 
@@ -103,7 +104,7 @@ class MainWindow(QMainWindow):
             self.ui.tableView_2.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_2.resizeColumnsToContents()
-
+        self.ui.tableView_2.horizontalHeader().sectionClicked.connect(self.sort_table)
         grant_delegate = AlignDelegate(table_name="grant")
         self.ui.tableView_2.setItemDelegate(grant_delegate)
 
@@ -113,7 +114,7 @@ class MainWindow(QMainWindow):
             self.ui.tableView_3.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_3.resizeColumnsToContents()
-
+        self.ui.tableView_3.horizontalHeader().sectionClicked.connect(self.sort_table)
         ntp_delegate = AlignDelegate(table_name="ntp")
         self.ui.tableView_3.setItemDelegate(ntp_delegate)
 
@@ -123,7 +124,7 @@ class MainWindow(QMainWindow):
             self.ui.tableView_4.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_4.resizeColumnsToContents()
-
+        self.ui.tableView_4.horizontalHeader().sectionClicked.connect(self.sort_table)
         templan_delegate = AlignDelegate(table_name="templan")
         self.ui.tableView_4.setItemDelegate(templan_delegate)
 
@@ -133,7 +134,7 @@ class MainWindow(QMainWindow):
             self.ui.tableView_13.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_13.resizeColumnsToContents()
-
+        self.ui.tableView_13.horizontalHeader().sectionClicked.connect(self.sort_table)
         pivot_delegate = AlignDelegate(table_name="pivot")
         self.ui.tableView_13.setItemDelegate(pivot_delegate)
 
@@ -143,8 +144,7 @@ class MainWindow(QMainWindow):
             self.ui.tableView_14.EditTrigger.NoEditTriggers
         )
         self.ui.tableView_14.resizeColumnsToContents()
-
-        # Применение делегата для "grnti"
+        self.ui.tableView_14.horizontalHeader().sectionClicked.connect(self.sort_table)
         grnti_delegate = AlignDelegate(table_name="grnti")
         self.ui.tableView_14.setItemDelegate(grnti_delegate)
 
@@ -195,6 +195,30 @@ class MainWindow(QMainWindow):
         self.ui.tableView_2.model().setFilter(filter_2)
         self.ui.tableView_3.model().setFilter(filter_2)
         self.ui.tableView_4.model().setFilter(filter_2)
+
+    def setup_sorting(self):
+        self.current_sort_column = None
+        self.current_sort_order = Qt.SortOrder.DescendingOrder
+
+    def sort_table(self, index):
+        table_view = self.sender().parent()
+        model = table_view.model()
+        header = table_view.horizontalHeader()
+
+        if self.current_sort_column == index:
+            self.current_sort_order = (
+                Qt.SortOrder.DescendingOrder
+                if self.current_sort_order == Qt.SortOrder.AscendingOrder
+                else Qt.SortOrder.AscendingOrder
+            )
+        else:
+            self.current_sort_column = index
+            self.current_sort_order = Qt.SortOrder.DescendingOrder
+
+        model.sort(self.current_sort_column, self.current_sort_order)
+
+        header.setSortIndicator(self.current_sort_column, self.current_sort_order)
+        header.setSortIndicatorShown(True)
 
     def open_about(self):
         self.about_window = AboutDialog()
