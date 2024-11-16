@@ -496,8 +496,13 @@ def select_vuz_pivot(filter_cond=None):
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
             .join(
                 GRNTI,
-                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2)) |
-                (GRNTI.codrub == func.substr(Grant.grnti_code, func.instr(Grant.grnti_code, ';') + 1, 2))
+                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
+                    )
+                ),
             )
             .where(and_(*conditions))
         )
@@ -516,8 +521,13 @@ def select_vuz_pivot(filter_cond=None):
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
             .join(
                 GRNTI,
-                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2)) |
-                (GRNTI.codrub == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ';') + 1, 2))
+                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
+                    )
+                ),
             )
             .where(and_(*conditions))
         )
@@ -536,14 +546,17 @@ def select_vuz_pivot(filter_cond=None):
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
             .join(
                 GRNTI,
-                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2)) |
-                (GRNTI.codrub == func.substr(Templan.grnti_code, func.instr(Templan.grnti_code, ';') + 1, 2))
+                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
+                    )
+                ),
             )
             .where(and_(*conditions))
         )
 
-        
-        
         subquery_grant = subquery_grant.group_by(VUZ.vuz_code, VUZ.vuz_name)
         subquery_ntp = subquery_ntp.group_by(VUZ.vuz_code, VUZ.vuz_name)
         subquery_templan = subquery_templan.group_by(VUZ.vuz_code, VUZ.vuz_name)
@@ -567,7 +580,7 @@ def select_vuz_pivot(filter_cond=None):
             + func.sum(combined.c.total_value_plan).label("total_sum"),
         ).group_by(combined.c.vuz_code, combined.c.vuz_name)
 
-        if 'codrub' in filter_cond:
+        if "codrub" in filter_cond:
             final_query = final_query.order_by(text("8 desc"))
 
         result = sess.execute(final_query).all()
@@ -695,12 +708,11 @@ def select_status_pivot(filter_cond=None):
 
 def select_grnti_pivot(filter_cond=None):
     conditions = []
-    grnti_conditions = []
     if filter_cond is not None:
         for fil, cond in filter_cond.items():
             if hasattr(VUZ, fil):
                 conditions.append(getattr(VUZ, fil).like(cond))
-    
+
     with Session() as sess:
         subquery_grant = (
             select(
@@ -716,8 +728,13 @@ def select_grnti_pivot(filter_cond=None):
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
             .join(
                 GRNTI,
-                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2)) |
-                (GRNTI.codrub == func.substr(Grant.grnti_code, func.instr(Grant.grnti_code, ';') + 1, 2))
+                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
+                    )
+                ),
             )
             .where(and_(*conditions))
             .group_by(GRNTI.codrub, GRNTI.rubrika)
@@ -737,8 +754,13 @@ def select_grnti_pivot(filter_cond=None):
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
             .join(
                 GRNTI,
-                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2)) |
-                (GRNTI.codrub == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ';') + 1, 2))
+                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
+                    )
+                ),
             )
             .where(and_(*conditions))
             .group_by(GRNTI.codrub, GRNTI.rubrika)
@@ -758,8 +780,13 @@ def select_grnti_pivot(filter_cond=None):
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
             .join(
                 GRNTI,
-                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2)) |
-                (GRNTI.codrub == func.substr(Templan.grnti_code, func.instr(Templan.grnti_code, ';') + 1, 2))
+                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
+                    )
+                ),
             )
             .where(and_(*conditions))
             .group_by(GRNTI.codrub, GRNTI.rubrika)

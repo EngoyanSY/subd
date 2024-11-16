@@ -18,11 +18,12 @@ from docx.shared import Pt, Inches
 from src.base_table_model import MakeModel, PivotModel
 import os
 
-from models import (select_vuz_pivot, 
-                    select_status_pivot, 
-                    select_region_pivot, 
-                    select_grnti_pivot,
-                    )
+from models import (
+    select_vuz_pivot,
+    select_status_pivot,
+    select_region_pivot,
+    select_grnti_pivot,
+)
 
 
 class BaseExportDialog(QDialog):
@@ -164,7 +165,7 @@ class BaseExportDialog(QDialog):
             if not file_path.endswith(".docx"):
                 file_path += ".docx"
             print(f"Сохраняем отчёт в: {file_path}")
-            make_report(file_path, type_report=4, filter_cond={'vuz_name':"АлтГТУ"})
+            make_report(file_path, type_report=4, filter_cond={"vuz_name": "АлтГТУ"})
             self.show_notification("Отчёт успешно сохранён!")
         except Exception as e:
             self.show_notification(f"Ошибка при сохранении отчета: {e}")
@@ -202,11 +203,11 @@ def make_report(file_path, type_report=1, filter_cond={}):
         column_names = ["Код ГРНТИ", "Рубрика"]
         doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
     elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
-        data = select_vuz_pivot(filter_cond) # должно содержать условие condrub
+        data = select_vuz_pivot(filter_cond)  # должно содержать условие condrub
         column_names = ["Код", "ВУЗ"]
         doc.add_heading("Отчет из совдной таблицы по кол-ву НИР по рубрике", level=1)
-    
-    if not(filter_cond == {}):
+
+    if not (filter_cond == {}):
         doc.add_heading("Фильтры:", level=2)
 
         if "vuz_name" in filter_cond:
@@ -214,7 +215,9 @@ def make_report(file_path, type_report=1, filter_cond={}):
         if "city" in filter_cond:
             doc.add_paragraph(f"Регион: {filter_cond['city']}")
         if "federation_subject" in filter_cond:
-            doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
+            doc.add_paragraph(
+                f"Субъект федерации: {filter_cond['federation_subject']}"
+            )
         if "region" in filter_cond:
             doc.add_paragraph(f"Регион: {filter_cond['region']}")
 
@@ -227,16 +230,18 @@ def make_report(file_path, type_report=1, filter_cond={}):
 
     # Заголовки столбцов
 
-    column_names.extend([
-        "Кол-во гр",
-        "Сумма гр",
-        "Кол-во НТП",
-        "Сумма НТП",
-        "Сумма тп",
-        "Кол-во тп",
-        "Общее кол-во",
-        "Общая сумма",
-    ])
+    column_names.extend(
+        [
+            "Кол-во гр",
+            "Сумма гр",
+            "Кол-во НТП",
+            "Сумма НТП",
+            "Сумма тп",
+            "Кол-во тп",
+            "Общее кол-во",
+            "Общая сумма",
+        ]
+    )
 
     table = doc.add_table(rows=1, cols=len(column_names))
     hdr_cells = table.rows[0].cells
@@ -278,5 +283,3 @@ def set_table_width(table):
             cell.width = Pt(0)  # Автоматически подстраивает по контенту
             # Убираем обтекание текста
             cell.paragraphs[0].paragraph_format.space_after = 0
-
-make_report("report.docx", type_report=4, filter_cond={"vuz_name" : "АлтГТУ"})
