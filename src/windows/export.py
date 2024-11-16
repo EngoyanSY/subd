@@ -18,7 +18,11 @@ from docx.shared import Pt, Inches
 from src.base_table_model import MakeModel, PivotModel
 import os
 
-from models import select_vuz_pivot, select_status_pivot, select_region_pivot
+from models import (select_vuz_pivot, 
+                    select_status_pivot, 
+                    select_region_pivot, 
+                    select_grnti_pivot,
+                    )
 
 
 class BaseExportDialog(QDialog):
@@ -160,7 +164,7 @@ class BaseExportDialog(QDialog):
             if not file_path.endswith(".docx"):
                 file_path += ".docx"
             print(f"Сохраняем отчёт в: {file_path}")
-            make_report(file_path)
+            make_report(file_path, type_report=4, filter_cond={'vuz_name':"АлтГТУ"})
             self.show_notification("Отчёт успешно сохранён!")
         except Exception as e:
             self.show_notification(f"Ошибка при сохранении отчета: {e}")
@@ -180,28 +184,39 @@ class PivotExportDialog(BaseExportDialog):
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
+    doc = Document()
     if type_report == 1:  # 1 - По вузам
         data = select_vuz_pivot(filter_cond)
         column_names = ["Код", "ВУЗ"]
+        doc.add_heading("Отчет из совдной таблицы по ВУЗам", level=1)
     elif type_report == 2:  # 2 - По статусам
         data = select_status_pivot(filter_cond)
         column_names = ["Статус"]
+        doc.add_heading("Отчет из совдной таблицы по статусам", level=1)
     elif type_report == 3:  # 3 - По регионам
         data = select_region_pivot(filter_cond)
         column_names = ["Регион"]
-    doc = Document()
+        doc.add_heading("Отчет из совдной таблицы по регионам", level=1)
+    elif type_report == 4:  # 4 - По ГРНТИ
+        data = select_grnti_pivot(filter_cond)
+        column_names = ["Код ГРНТИ", "Рубрика"]
+        doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
+    elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
+        data = select_vuz_pivot(filter_cond) # должно содержать условие condrub
+        column_names = ["Код", "ВУЗ"]
+        doc.add_heading("Отчет из совдной таблицы по кол-ву НИР по рубрике", level=1)
+    
+    if not(filter_cond == {}):
+        doc.add_heading("Фильтры:", level=2)
 
-    doc.add_heading("Отчет из совдной таблицы", level=1)
-    doc.add_heading("Фильтры:", level=2)
-
-    if "vuz_name" in filter_cond:
-        doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
-    if "city" in filter_cond:
-        doc.add_paragraph(f"Регион: {filter_cond['city']}")
-    if "federation_subject" in filter_cond:
-        doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
-    if "region" in filter_cond:
-        doc.add_paragraph(f"Регион: {filter_cond['region']}")
+        if "vuz_name" in filter_cond:
+            doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
+        if "city" in filter_cond:
+            doc.add_paragraph(f"Регион: {filter_cond['city']}")
+        if "federation_subject" in filter_cond:
+            doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
+        if "region" in filter_cond:
+            doc.add_paragraph(f"Регион: {filter_cond['region']}")
 
     # Настройка полей страницы
     section = doc.sections[0]
@@ -212,7 +227,7 @@ def make_report(file_path, type_report=1, filter_cond={}):
 
     # Заголовки столбцов
 
-    column_names += [
+    column_names.extend([
         "Кол-во гр",
         "Сумма гр",
         "Кол-во НТП",
@@ -221,7 +236,8 @@ def make_report(file_path, type_report=1, filter_cond={}):
         "Кол-во тп",
         "Общее кол-во",
         "Общая сумма",
-    ]
+    ])
+
     table = doc.add_table(rows=1, cols=len(column_names))
     hdr_cells = table.rows[0].cells
     for i, column in enumerate(column_names):
@@ -262,3 +278,5 @@ def set_table_width(table):
             cell.width = Pt(0)  # Автоматически подстраивает по контенту
             # Убираем обтекание текста
             cell.paragraphs[0].paragraph_format.space_after = 0
+
+make_report("report.docx", type_report=4, filter_cond={"vuz_name" : "АлтГТУ"})
