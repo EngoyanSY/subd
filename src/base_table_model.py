@@ -57,6 +57,11 @@ class BaseTableModel(QAbstractTableModel):
                 ]
         self.layoutChanged.emit()
 
+    def sort(self, column, order):
+        reverse = order == Qt.SortOrder.DescendingOrder
+        self._filtered_data.sort(key=lambda x: x[column], reverse=reverse)
+        self.layoutChanged.emit()
+
 
 class MakeModel(QAbstractTableModel):
     _headers = []

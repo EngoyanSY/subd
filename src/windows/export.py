@@ -18,7 +18,12 @@ from docx.shared import Pt, Inches
 from src.base_table_model import MakeModel, PivotModel, StatusModel, RegionModel
 import os
 
-from models import select_vuz_pivot, select_status_pivot, select_region_pivot
+from models import (
+    select_vuz_pivot,
+    select_status_pivot,
+    select_region_pivot,
+    select_grnti_pivot,
+)
 
 
 class BaseExportDialog(QDialog):
@@ -197,12 +202,15 @@ class RegionExportDialog(BaseExportDialog):
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
+    doc = Document()
     if type_report == 1:  # 1 - По вузам
         data = select_vuz_pivot(filter_cond)
         column_names = ["Код", "ВУЗ"]
+        doc.add_heading("Отчет из совдной таблицы по ВУЗам", level=1)
     elif type_report == 2:  # 2 - По статусам
         data = select_status_pivot(filter_cond)
         column_names = ["Статус"]
+        doc.add_heading("Отчет из совдной таблицы по статусам", level=1)
     elif type_report == 3:  # 3 - По регионам
         data = select_region_pivot(filter_cond)
         column_names = ["Регион"]
@@ -229,16 +237,19 @@ def make_report(file_path, type_report=1, filter_cond={}):
 
     # Заголовки столбцов
 
-    column_names += [
-        "Кол-во гр",
-        "Сумма гр",
-        "Кол-во НТП",
-        "Сумма НТП",
-        "Сумма тп",
-        "Кол-во тп",
-        "Общее кол-во",
-        "Общая сумма",
-    ]
+    column_names.extend(
+        [
+            "Кол-во гр",
+            "Сумма гр",
+            "Кол-во НТП",
+            "Сумма НТП",
+            "Сумма тп",
+            "Кол-во тп",
+            "Общее кол-во",
+            "Общая сумма",
+        ]
+    )
+
     table = doc.add_table(rows=1, cols=len(column_names))
     hdr_cells = table.rows[0].cells
     for i, column in enumerate(column_names):
