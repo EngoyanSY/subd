@@ -158,8 +158,7 @@ class BaseExportDialog(QDialog):
         print(self.report_type, self.filters)
         file_path = self.file_path.strip()
         if not file_path:
-            self.show_notification("Пожалуйста, выберите файл и путь для сохранения.")
-            return
+            self.browse_file()
         try:
             # Проверка доступности файла
             if os.path.exists(file_path):
@@ -234,7 +233,12 @@ def make_report(file_path, type_report=1, filter_cond={}):
         column_names = ["Регион"]
         doc.add_heading("Отчет из совдной таблицы по регионам", level=1)
     elif type_report == 4:  # 4 - По ГРНТИ
-        data = select_grnti_pivot(filter_cond)
+        if "grnti_code" in filter_cond:
+            filter_cond["codrub"] = filter_cond["grnti_code"]
+            data = select_grnti_pivot(filter_cond)
+            del filter_cond["codrub"]
+        else:
+            data = select_grnti_pivot(filter_cond)
         column_names = ["Код", "Рубрика"]
         doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
     elif type_report == 5:  # 5 - По кол-ву НИР по рубрике

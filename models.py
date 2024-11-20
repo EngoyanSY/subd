@@ -712,6 +712,8 @@ def select_grnti_pivot(filter_cond=None):
         for fil, cond in filter_cond.items():
             if hasattr(VUZ, fil):
                 conditions.append(getattr(VUZ, fil).like(cond))
+            elif hasattr(GRNTI, fil):
+                conditions.append(getattr(GRNTI, fil).like(cond))
 
     with Session() as sess:
         subquery_grant = (
