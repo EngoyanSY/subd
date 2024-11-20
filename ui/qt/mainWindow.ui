@@ -9,9 +9,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1267</width>
+    <width>1251</width>
     <height>837</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Segoe UI</family>
+   </font>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -88,7 +93,8 @@
      <widget class="QLabel" name="label_5">
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <family>Segoe UI</family>
+        <pointsize>15</pointsize>
         <kerning>true</kerning>
        </font>
       </property>
@@ -117,7 +123,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
        </font>
       </property>
       <property name="accessibleDescription">
@@ -130,7 +137,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>5</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -271,13 +278,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1267</width>
-     <height>29</height>
+     <width>1251</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>13</pointsize>
+     <pointsize>11</pointsize>
     </font>
    </property>
    <property name="defaultUp">
@@ -286,14 +293,6 @@
    <property name="nativeMenuBar">
     <bool>true</bool>
    </property>
-   <widget class="QMenu" name="main_data">
-    <property name="title">
-     <string>Данные</string>
-    </property>
-    <property name="toolTipsVisible">
-     <bool>true</bool>
-    </property>
-   </widget>
    <widget class="QMenu" name="about">
     <property name="tearOffEnabled">
      <bool>false</bool>
@@ -326,7 +325,6 @@
     </widget>
     <addaction name="menu"/>
    </widget>
-   <addaction name="main_data"/>
    <addaction name="export_2"/>
    <addaction name="about"/>
   </widget>
