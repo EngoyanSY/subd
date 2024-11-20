@@ -222,6 +222,7 @@ class MostExportDialog(BaseExportDialog):
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
+    print(type_report, filter_cond)
     doc = Document()
     if type_report == 1:  # 1 - По вузам
         data = select_vuz_pivot(filter_cond)

@@ -92,7 +92,7 @@ class MakeModel(QAbstractTableModel):
             self._data = [list(row.values()) for row in data]
         elif model == "grnti":
             data = select_grnti_pivot(filter_cond)
-            self.data = [list(row.values()) for row in data]
+            self._data = [list(row.values()) for row in data]
         elif model == "most":
             data = select_vuz_pivot(filter_cond)
             self._data = [list(row.values()) for row in data]
