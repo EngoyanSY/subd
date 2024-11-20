@@ -322,6 +322,7 @@
      <addaction name="action_6"/>
      <addaction name="action_7"/>
      <addaction name="action_8"/>
+     <addaction name="action_3"/>
     </widget>
     <addaction name="menu"/>
    </widget>
@@ -361,6 +362,11 @@
   <action name="action_9">
    <property name="text">
     <string>Сводка</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="text">
+    <string>Распределение НИР по кол-ву работ рубрики ГРНТИ</string>
    </property>
   </action>
  </widget>

@@ -3,8 +3,6 @@ from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtCore import Qt, QUrl
 
-
-from src.windows.about import AboutDialog
 from src.windows.export import (
     PivotExportDialog,
     StatusExportDialog,
@@ -36,6 +34,8 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Анализ сводных показателей выполнения НИР - Вариант 10")
         self.showMaximized()
+
+        self.setup_sorting()
 
         self.setupFilters()
 
