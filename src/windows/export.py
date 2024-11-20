@@ -15,7 +15,7 @@ from ui.py.export_window import Ui_Dialog
 
 from docx import Document
 from docx.shared import Pt, Inches
-from src.base_table_model import MakeModel, PivotModel
+from src.base_table_model import MakeModel, PivotModel, StatusModel, RegionModel
 import os
 
 from models import (
@@ -29,10 +29,12 @@ from models import (
 class BaseExportDialog(QDialog):
     table_model_class = MakeModel
     report = "pivot"
+    report_type = 1
 
     def __init__(self, filter_cond={}):
         super().__init__()
         self.ui = Ui_Dialog()
+        self.filters = filter_cond
         filter_trans = {
             "region": "Регион",
             "city": "Город",
@@ -165,7 +167,9 @@ class BaseExportDialog(QDialog):
             if not file_path.endswith(".docx"):
                 file_path += ".docx"
             print(f"Сохраняем отчёт в: {file_path}")
-            make_report(file_path, type_report=4, filter_cond={"vuz_name": "АлтГТУ"})
+            make_report(
+                file_path, type_report=self.report_type, filter_cond=self.filters
+            )
             self.show_notification("Отчёт успешно сохранён!")
         except Exception as e:
             self.show_notification(f"Ошибка при сохранении отчета: {e}")
@@ -182,6 +186,19 @@ class BaseExportDialog(QDialog):
 class PivotExportDialog(BaseExportDialog):
     table_model_class = PivotModel
     report = "pivot"
+    report_type = 1
+
+
+class StatusExportDialog(BaseExportDialog):
+    table_model_class = StatusModel
+    report = "status"
+    report_type = 2
+
+
+class RegionExportDialog(BaseExportDialog):
+    table_model_class = RegionModel
+    report = "region"
+    report_type = 3
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
@@ -197,29 +214,19 @@ def make_report(file_path, type_report=1, filter_cond={}):
     elif type_report == 3:  # 3 - По регионам
         data = select_region_pivot(filter_cond)
         column_names = ["Регион"]
-        doc.add_heading("Отчет из совдной таблицы по регионам", level=1)
-    elif type_report == 4:  # 4 - По ГРНТИ
-        data = select_grnti_pivot(filter_cond)
-        column_names = ["Код ГРНТИ", "Рубрика"]
-        doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
-    elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
-        data = select_vuz_pivot(filter_cond)  # должно содержать условие condrub
-        column_names = ["Код", "ВУЗ"]
-        doc.add_heading("Отчет из совдной таблицы по кол-ву НИР по рубрике", level=1)
+    doc = Document()
 
-    if not (filter_cond == {}):
-        doc.add_heading("Фильтры:", level=2)
+    doc.add_heading("Отчет из сводной таблицы", level=1)
+    doc.add_heading("Фильтры:", level=2)
 
-        if "vuz_name" in filter_cond:
-            doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
-        if "city" in filter_cond:
-            doc.add_paragraph(f"Регион: {filter_cond['city']}")
-        if "federation_subject" in filter_cond:
-            doc.add_paragraph(
-                f"Субъект федерации: {filter_cond['federation_subject']}"
-            )
-        if "region" in filter_cond:
-            doc.add_paragraph(f"Регион: {filter_cond['region']}")
+    if "vuz_name" in filter_cond:
+        doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
+    if "city" in filter_cond:
+        doc.add_paragraph(f"Город: {filter_cond['city']}")
+    if "federation_subject" in filter_cond:
+        doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
+    if "region" in filter_cond:
+        doc.add_paragraph(f"Регион: {filter_cond['region']}")
 
     # Настройка полей страницы
     section = doc.sections[0]

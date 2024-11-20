@@ -5,6 +5,7 @@ from models import GRNTI
 class GRNTITableModel(BaseTableModel):
     table_class = GRNTI
     _headers_by_ind = [
+        "",
         "Код рубрики",
         "Наименование рубрики",
     ]
