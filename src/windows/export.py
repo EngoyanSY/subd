@@ -15,7 +15,13 @@ from ui.py.export_window import Ui_Dialog
 
 from docx import Document
 from docx.shared import Pt, Inches
-from src.base_table_model import MakeModel, PivotModel, StatusModel, RegionModel
+from src.base_table_model import (
+    MakeModel, 
+    PivotModel, 
+    StatusModel, 
+    RegionModel,
+    GRNTIModel,
+)
 import os
 
 from models import (
@@ -200,6 +206,11 @@ class RegionExportDialog(BaseExportDialog):
     report = "region"
     report_type = 3
 
+class GRNTIExportDialog(BaseExportDialog):
+    table_model_class = GRNTIModel
+    report = "grnti"
+    report_type = 4
+
 
 def make_report(file_path, type_report=1, filter_cond={}):
     doc = Document()
@@ -217,7 +228,7 @@ def make_report(file_path, type_report=1, filter_cond={}):
         doc.add_heading("Отчет из совдной таблицы по регионам", level=1)
     elif type_report == 4:  # 4 - По ГРНТИ
         data = select_grnti_pivot(filter_cond)
-        column_names = ["Код ГРНТИ", "Рубрика"]
+        column_names = ["Код", "Рубрика"]
         doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
     elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
         data = select_vuz_pivot(filter_cond)  # должно содержать условие condrub

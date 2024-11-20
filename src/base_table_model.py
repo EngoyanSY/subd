@@ -4,7 +4,12 @@ from PyQt6.QtCore import QAbstractTableModel
 from PyQt6.QtCore import Qt, QModelIndex
 
 from models import BaseTable, VUZ, GRNTI, Templan, Grant, NTP
-from models import select_status_pivot, select_region_pivot
+from models import (
+    select_vuz_pivot,
+    select_status_pivot, 
+    select_region_pivot,
+    select_grnti_pivot,
+)
 
 
 class BaseTableModel(QAbstractTableModel):
@@ -77,39 +82,17 @@ class MakeModel(QAbstractTableModel):
         self._data = []
 
         if model == "pivot":
-            for vuz in self.vuz:
-                grants = list(
-                    filter(lambda x: x["vuz_name"] == vuz["vuz_name"], self.grant)
-                )
-                ntp = list(
-                    filter(lambda x: x["vuz_name"] == vuz["vuz_name"], self.ntp)
-                )
-                templan = list(
-                    filter(lambda x: x["vuz_name"] == vuz["vuz_name"], self.templan)
-                )
-                value_grant = sum(map(lambda x: x["grant_value"], grants))
-                value_ntp = sum(map(lambda x: x["year_value_plan"], ntp))
-                value_templan = sum(map(lambda x: x["value_plan"], templan))
-                row = [
-                    vuz["vuz_code"],
-                    vuz["vuz_name"],
-                    len(grants),
-                    value_grant,
-                    len(ntp),
-                    value_ntp,
-                    len(templan),
-                    value_templan,
-                    len(grants) + len(ntp) + len(templan),
-                    value_ntp + value_grant + value_templan,
-                ]
-                if row[-1] > 0:
-                    self._data.append(row.copy())
+            data = select_vuz_pivot(filter_cond)
+            self._data = [list(row.values()) for row in data]
         elif model == "status":
             data = select_status_pivot(filter_cond)
             self._data = [list(row.values()) for row in data]
         elif model == "region":
             data = select_region_pivot(filter_cond)
             self._data = [list(row.values()) for row in data]
+        elif model == "grnti":
+            data = select_grnti_pivot(filter_cond)
+            self.data = [list(row.values()) for row in data]
 
     def columnCount(self, parent=QModelIndex()):
         return len(self._headers)
@@ -173,3 +156,18 @@ class RegionModel(MakeModel):
         "Общее кол-во",
         "Общая сумма",
     ]
+
+class GRNTIModel(MakeModel):
+    _headers = [
+        "Код",
+        "Рубрика",
+        "Кол-во гр",
+        "Сумма гр",
+        "Кол-во НТП",
+        "Сумма НТП",
+        "Сумма тп",
+        "Кол-во тп",
+        "Общее кол-во",
+        "Общая сумма",
+    ]
+

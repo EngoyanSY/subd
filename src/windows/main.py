@@ -9,6 +9,7 @@ from src.windows.export import (
     PivotExportDialog,
     StatusExportDialog,
     RegionExportDialog,
+    GRNTIExportDialog,
 )
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
@@ -54,7 +55,7 @@ class MainWindow(QMainWindow):
             self.open_export_subclass(StatusExportDialog)
         )
         self.ui.action_8.triggered.connect(
-            self.open_export_subclass(PivotExportDialog)
+            self.open_export_subclass(GRNTIExportDialog)
         )
 
         self.ui.set_filter.clicked.connect(self.set_filters)
