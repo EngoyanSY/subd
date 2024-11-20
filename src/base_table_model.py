@@ -9,6 +9,7 @@ from models import (
     select_status_pivot,
     select_region_pivot,
     select_grnti_pivot,
+    select_most_pivot,
 )
 
 
@@ -94,7 +95,9 @@ class MakeModel(QAbstractTableModel):
             data = select_grnti_pivot(filter_cond)
             self._data = [list(row.values()) for row in data]
         elif model == "most":
-            data = select_vuz_pivot(filter_cond)
+            filter_cond["codrub"] = filter_cond["grnti_code"]
+            data = select_most_pivot(filter_cond)
+            del filter_cond["codrub"]
             self._data = [list(row.values()) for row in data]
 
     def columnCount(self, parent=QModelIndex()):

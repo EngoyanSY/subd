@@ -30,6 +30,7 @@ from models import (
     select_status_pivot,
     select_region_pivot,
     select_grnti_pivot,
+    select_most_pivot,
 )
 
 
@@ -247,7 +248,7 @@ def make_report(file_path, type_report=1, filter_cond={}):
         doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
     elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
         filter_cond["codrub"] = filter_cond["grnti_code"]
-        data = select_vuz_pivot(filter_cond)
+        data = select_most_pivot(filter_cond)
         del filter_cond["codrub"]
         column_names = ["Код", "ВУЗ"]
         doc.add_heading("Отчет из совдной таблицы по кол-ву НИР по рубрике", level=1)
