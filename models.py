@@ -21,7 +21,7 @@ from sqlalchemy import (
     or_,
     desc,
     asc,
-    text
+    text,
 )
 from sqlalchemy.orm import DeclarativeBase, aliased
 import pandas as pd
@@ -473,9 +473,9 @@ def select_region_pivot(filter_cond=None):
         return result_dto
 
 
-def select_vuz_pivot(filter_cond=None):    
+def select_vuz_pivot(filter_cond=None):
     conditions = []
-    g1 = aliased(GRNTI)  
+    g1 = aliased(GRNTI)
     g2 = aliased(GRNTI)
     if filter_cond is not None:
         for fil, cond in filter_cond.items():
@@ -495,7 +495,13 @@ def select_vuz_pivot(filter_cond=None):
             )
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
             .outerjoin(g1, g1.codrub == func.substr(Grant.grnti_code, 1, 2))
-            .outerjoin(g2, g2.codrub == func.substr(Grant.grnti_code, func.instr(Grant.grnti_code, ';') + 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
+                ),
+            )
             .where(*conditions)
         )
 
@@ -512,7 +518,11 @@ def select_vuz_pivot(filter_cond=None):
             )
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
             .outerjoin(g1, g1.codrub == func.substr(NTP.grnti_code, 1, 2))
-            .outerjoin(g2, g2.codrub == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ';') + 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2),
+            )
             .where(*conditions)
         )
 
@@ -529,7 +539,13 @@ def select_vuz_pivot(filter_cond=None):
             )
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
             .outerjoin(g1, g1.codrub == func.substr(Templan.grnti_code, 1, 2))
-            .outerjoin(g2, g2.codrub == func.substr(Templan.grnti_code, func.instr(Templan.grnti_code, ';') + 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
+                ),
+            )
             .where(*conditions)
         )
 
@@ -685,7 +701,7 @@ def select_status_pivot(filter_cond=None):
 
 def select_grnti_pivot(filter_cond=None):
     conditions = []
-    g1 = aliased(GRNTI)  
+    g1 = aliased(GRNTI)
     g2 = aliased(GRNTI)
     if filter_cond is not None:
         for fil, cond in filter_cond.items():
@@ -707,11 +723,17 @@ def select_grnti_pivot(filter_cond=None):
             )
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
             .outerjoin(g1, g1.codrub == func.substr(Grant.grnti_code, 1, 2))
-            .outerjoin(g2, g2.codrub == func.substr(Grant.grnti_code, func.instr(Grant.grnti_code, ';') + 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
+                ),
+            )
             .where(and_(*conditions))
             .group_by(g1.codrub, g1.rubrika)
         )
-        
+
         subquery_ntp = (
             select(
                 g1.codrub,
@@ -725,7 +747,11 @@ def select_grnti_pivot(filter_cond=None):
             )
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
             .outerjoin(g1, g1.codrub == func.substr(NTP.grnti_code, 1, 2))
-            .outerjoin(g2, g2.codrub == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ';') + 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2),
+            )
             .where(and_(*conditions))
             .group_by(g1.codrub, g1.rubrika)
         )
@@ -743,7 +769,13 @@ def select_grnti_pivot(filter_cond=None):
             )
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
             .outerjoin(g1, g1.codrub == func.substr(Templan.grnti_code, 1, 2))
-            .outerjoin(g2, g2.codrub == func.substr(Templan.grnti_code, func.instr(Templan.grnti_code, ';') + 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
+                ),
+            )
             .where(and_(*conditions))
             .group_by(g1.codrub, g1.rubrika)
         )
