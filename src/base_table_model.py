@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt, QModelIndex
 from models import BaseTable, VUZ, GRNTI, Templan, Grant, NTP
 from models import (
     select_vuz_pivot,
-    select_status_pivot, 
+    select_status_pivot,
     select_region_pivot,
     select_grnti_pivot,
 )
@@ -160,6 +160,7 @@ class RegionModel(MakeModel):
         "Общая сумма",
     ]
 
+
 class GRNTIModel(MakeModel):
     _headers = [
         "Код",
@@ -173,6 +174,7 @@ class GRNTIModel(MakeModel):
         "Общее кол-во",
         "Общая сумма",
     ]
+
 
 class MostModel(MakeModel):
     _headers = [

@@ -58,9 +58,7 @@ class MainWindow(QMainWindow):
         self.ui.action_8.triggered.connect(
             self.open_export_subclass(GRNTIExportDialog)
         )
-        self.ui.action_3.triggered.connect(
-            self.open_export_subclass(MostExportDialog)
-        )
+        self.ui.action_3.triggered.connect(self.open_export_subclass(MostExportDialog))
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
@@ -96,7 +94,7 @@ class MainWindow(QMainWindow):
             self.filter_cond["grnti_code"] = grnti_code
             print(self.filter_cond)
         self.setupFilters(self.filter_cond)
-        
+
     def clear_filters(self):
         self.filter_cond = {}
         self.setupFilters(self.filter_cond)
@@ -204,7 +202,7 @@ class MainWindow(QMainWindow):
             if "grnti_code" in filters_vuz:
                 filter_2["grnti_code"] = filters_vuz["grnti_code"]
                 del filter_4["grnti_code"]
-            
+
         self.ui.tableView.model().setFilter(filter_4)
         self.ui.tableView_13.model().setFilter(filter_3)
         self.ui.tableView_2.model().setFilter(filter_2)

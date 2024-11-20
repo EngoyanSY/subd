@@ -16,9 +16,9 @@ from ui.py.export_window import Ui_Dialog
 from docx import Document
 from docx.shared import Pt, Inches
 from src.base_table_model import (
-    MakeModel, 
-    PivotModel, 
-    StatusModel, 
+    MakeModel,
+    PivotModel,
+    StatusModel,
     RegionModel,
     GRNTIModel,
     MostModel,
@@ -208,15 +208,18 @@ class RegionExportDialog(BaseExportDialog):
     report = "region"
     report_type = 3
 
+
 class GRNTIExportDialog(BaseExportDialog):
     table_model_class = GRNTIModel
     report = "grnti"
     report_type = 4
 
+
 class MostExportDialog(BaseExportDialog):
     table_model_class = MostModel
     report = "most"
     report_type = 5
+
 
 def make_report(file_path, type_report=1, filter_cond={}):
     doc = Document()
