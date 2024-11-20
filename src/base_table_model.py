@@ -4,6 +4,7 @@ from PyQt6.QtCore import QAbstractTableModel
 from PyQt6.QtCore import Qt, QModelIndex
 
 from models import BaseTable, VUZ, GRNTI, Templan, Grant, NTP
+from models import select_vuz_pivot, select_status_pivot, select_region_pivot
 
 
 class BaseTableModel(QAbstractTableModel):
@@ -98,6 +99,17 @@ class MakeModel(QAbstractTableModel):
                 ]
                 if row[-1] > 0:
                     self._data.append(row.copy())
+        elif model == "status":
+            data = select_status_pivot(filter_cond)
+            self._data = [
+                list(row.values()) for row in data
+            ]
+        elif model == "region":
+            data = select_region_pivot(filter_cond)
+            self._data = [
+                list(row.values()) for row in data
+            ]
+
 
     def columnCount(self, parent=QModelIndex()):
         return len(self._headers)
@@ -130,6 +142,34 @@ class PivotModel(MakeModel):
         "Сумма по НТП",
         "Сумма по тем. планам",
         "Кол-во по тем. планам",
+        "Общее кол-во",
+        "Общая сумма",
+    ]
+
+
+class StatusModel(MakeModel):
+    _headers = [
+        "Статус ВУЗа",
+        "Кол-во гр",
+        "Сумма гр",
+        "Кол-во НТП",
+        "Сумма НТП",
+        "Сумма тп",
+        "Кол-во тп",
+        "Общее кол-во",
+        "Общая сумма",
+    ]
+
+
+class RegionModel(MakeModel):
+    _headers = [
+        "Регион",
+        "Кол-во гр",
+        "Сумма гр",
+        "Кол-во НТП",
+        "Сумма НТП",
+        "Сумма тп",
+        "Кол-во тп",
         "Общее кол-во",
         "Общая сумма",
     ]
