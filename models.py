@@ -581,7 +581,7 @@ def select_vuz_pivot(filter_cond=None):
         ).group_by(combined.c.vuz_code, combined.c.vuz_name)
 
         if "codrub" in filter_cond:
-            final_query = final_query.order_by(text("8 desc"))
+            final_query = final_query.order_by(text("9 desc"))
 
         result = sess.execute(final_query).all()
 

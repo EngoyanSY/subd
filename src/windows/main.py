@@ -8,6 +8,7 @@ from src.windows.export import (
     StatusExportDialog,
     RegionExportDialog,
     GRNTIExportDialog,
+    MostExportDialog,
 )
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
@@ -57,6 +58,9 @@ class MainWindow(QMainWindow):
         self.ui.action_8.triggered.connect(
             self.open_export_subclass(GRNTIExportDialog)
         )
+        self.ui.action_3.triggered.connect(
+            self.open_export_subclass(MostExportDialog)
+        )
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
@@ -90,8 +94,9 @@ class MainWindow(QMainWindow):
         grnti_code = self.ui.grnti_code.text()
         if grnti_code:
             self.filter_cond["grnti_code"] = grnti_code
+            print(self.filter_cond)
         self.setupFilters(self.filter_cond)
-
+        
     def clear_filters(self):
         self.filter_cond = {}
         self.setupFilters(self.filter_cond)
@@ -195,10 +200,12 @@ class MainWindow(QMainWindow):
             )
             filter_2 = {"vuz_name": vuz["name"]}
             filter_3 = filter_2.copy()
+            filter_4 = filters_vuz.copy()
             if "grnti_code" in filters_vuz:
                 filter_2["grnti_code"] = filters_vuz["grnti_code"]
-                del filters_vuz["grnti_code"]
-        self.ui.tableView.model().setFilter(filters_vuz)
+                del filter_4["grnti_code"]
+            
+        self.ui.tableView.model().setFilter(filter_4)
         self.ui.tableView_13.model().setFilter(filter_3)
         self.ui.tableView_2.model().setFilter(filter_2)
         self.ui.tableView_3.model().setFilter(filter_2)

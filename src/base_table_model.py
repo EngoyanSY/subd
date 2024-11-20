@@ -93,6 +93,9 @@ class MakeModel(QAbstractTableModel):
         elif model == "grnti":
             data = select_grnti_pivot(filter_cond)
             self.data = [list(row.values()) for row in data]
+        elif model == "most":
+            data = select_vuz_pivot(filter_cond)
+            self._data = [list(row.values()) for row in data]
 
     def columnCount(self, parent=QModelIndex()):
         return len(self._headers)
@@ -171,3 +174,16 @@ class GRNTIModel(MakeModel):
         "Общая сумма",
     ]
 
+class MostModel(MakeModel):
+    _headers = [
+        "Код ВУЗа",
+        "Наименование ВУЗа",
+        "Кол-во по грантам",
+        "Сумма по грантам",
+        "Кол-во по НТП",
+        "Сумма по НТП",
+        "Сумма по тем. планам",
+        "Кол-во по тем. планам",
+        "Общее кол-во",
+        "Общая сумма",
+    ]

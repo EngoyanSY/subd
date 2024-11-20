@@ -21,6 +21,7 @@ from src.base_table_model import (
     StatusModel, 
     RegionModel,
     GRNTIModel,
+    MostModel,
 )
 import os
 
@@ -28,6 +29,7 @@ from models import (
     select_vuz_pivot,
     select_status_pivot,
     select_region_pivot,
+    select_grnti_pivot,
 )
 
 
@@ -153,6 +155,7 @@ class BaseExportDialog(QDialog):
         self.close()
 
     def create_report(self):
+        print(self.report_type, self.filters)
         file_path = self.file_path.strip()
         if not file_path:
             self.show_notification("Пожалуйста, выберите файл и путь для сохранения.")
@@ -211,6 +214,10 @@ class GRNTIExportDialog(BaseExportDialog):
     report = "grnti"
     report_type = 4
 
+class MostExportDialog(BaseExportDialog):
+    table_model_class = MostModel
+    report = "most"
+    report_type = 5
 
 def make_report(file_path, type_report=1, filter_cond={}):
     doc = Document()
@@ -231,7 +238,9 @@ def make_report(file_path, type_report=1, filter_cond={}):
         column_names = ["Код", "Рубрика"]
         doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
     elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
-        data = select_vuz_pivot(filter_cond)  # должно содержать условие condrub
+        filter_cond["codrub"] = filter_cond["grnti_code"]
+        data = select_vuz_pivot(filter_cond)
+        del filter_cond["codrub"]
         column_names = ["Код", "ВУЗ"]
         doc.add_heading("Отчет из совдной таблицы по кол-ву НИР по рубрике", level=1)
 
@@ -246,6 +255,8 @@ def make_report(file_path, type_report=1, filter_cond={}):
         doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
     if "region" in filter_cond:
         doc.add_paragraph(f"Регион: {filter_cond['region']}")
+    if "grnti_code" in filter_cond:
+        doc.add_paragraph(f"Рубрика: {filter_cond['grnti_code']}")
 
     # Настройка полей страницы
     section = doc.sections[0]
