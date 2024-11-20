@@ -4,7 +4,7 @@ from PyQt6.QtCore import QAbstractTableModel
 from PyQt6.QtCore import Qt, QModelIndex
 
 from models import BaseTable, VUZ, GRNTI, Templan, Grant, NTP
-from models import select_vuz_pivot, select_status_pivot, select_region_pivot
+from models import select_status_pivot, select_region_pivot
 
 
 class BaseTableModel(QAbstractTableModel):
@@ -101,15 +101,10 @@ class MakeModel(QAbstractTableModel):
                     self._data.append(row.copy())
         elif model == "status":
             data = select_status_pivot(filter_cond)
-            self._data = [
-                list(row.values()) for row in data
-            ]
+            self._data = [list(row.values()) for row in data]
         elif model == "region":
             data = select_region_pivot(filter_cond)
-            self._data = [
-                list(row.values()) for row in data
-            ]
-
+            self._data = [list(row.values()) for row in data]
 
     def columnCount(self, parent=QModelIndex()):
         return len(self._headers)

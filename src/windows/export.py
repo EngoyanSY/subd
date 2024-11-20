@@ -162,7 +162,9 @@ class BaseExportDialog(QDialog):
             if not file_path.endswith(".docx"):
                 file_path += ".docx"
             print(f"Сохраняем отчёт в: {file_path}")
-            make_report(file_path, type_report=self.report_type, filter_cond=self.filters)
+            make_report(
+                file_path, type_report=self.report_type, filter_cond=self.filters
+            )
             self.show_notification("Отчёт успешно сохранён!")
         except Exception as e:
             self.show_notification(f"Ошибка при сохранении отчета: {e}")

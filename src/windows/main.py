@@ -3,7 +3,11 @@ from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction
 
 from src.windows.about import AboutDialog
-from src.windows.export import PivotExportDialog, StatusExportDialog, RegionExportDialog
+from src.windows.export import (
+    PivotExportDialog,
+    StatusExportDialog,
+    RegionExportDialog,
+)
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
 from core import Session
