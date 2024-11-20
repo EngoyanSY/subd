@@ -15,19 +15,26 @@ from ui.py.export_window import Ui_Dialog
 
 from docx import Document
 from docx.shared import Pt, Inches
-from core import Session
-from models import Pivot
-from src.base_table_model import MakeModel, PivotModel
+from src.base_table_model import MakeModel, PivotModel, StatusModel, RegionModel
 import os
+
+from models import (
+    select_vuz_pivot,
+    select_status_pivot,
+    select_region_pivot,
+    select_grnti_pivot,
+)
 
 
 class BaseExportDialog(QDialog):
     table_model_class = MakeModel
     report = "pivot"
+    report_type = 1
 
     def __init__(self, filter_cond={}):
         super().__init__()
         self.ui = Ui_Dialog()
+        self.filters = filter_cond
         filter_trans = {
             "region": "Регион",
             "city": "Город",
@@ -160,7 +167,9 @@ class BaseExportDialog(QDialog):
             if not file_path.endswith(".docx"):
                 file_path += ".docx"
             print(f"Сохраняем отчёт в: {file_path}")
-            make_report(file_path)
+            make_report(
+                file_path, type_report=self.report_type, filter_cond=self.filters
+            )
             self.show_notification("Отчёт успешно сохранён!")
         except Exception as e:
             self.show_notification(f"Ошибка при сохранении отчета: {e}")
@@ -177,28 +186,59 @@ class BaseExportDialog(QDialog):
 class PivotExportDialog(BaseExportDialog):
     table_model_class = PivotModel
     report = "pivot"
+    report_type = 1
 
 
-def make_report(file_path):
-    with Session() as session:
-        rows = session.query(Pivot).all()
-        total = Pivot.total()
-        doc = Document()
-        doc.add_heading("Отчет из совдной таблицы", level=1)
-        table = doc.add_table(rows=1, cols=len(Pivot.__table__.columns))
+class StatusExportDialog(BaseExportDialog):
+    table_model_class = StatusModel
+    report = "status"
+    report_type = 2
 
-        # Настройка полей страницы
-        section = doc.sections[0]
-        section.top_margin = Inches(0.5)
-        section.bottom_margin = Inches(0.5)
-        section.left_margin = Inches(0.5)
-        section.right_margin = Inches(0.5)
 
-        # Заголовки столбцов
-        column_names = [
-            "Ном",
-            "Код",
-            "ВУЗ",
+class RegionExportDialog(BaseExportDialog):
+    table_model_class = RegionModel
+    report = "region"
+    report_type = 3
+
+
+def make_report(file_path, type_report=1, filter_cond={}):
+    doc = Document()
+    if type_report == 1:  # 1 - По вузам
+        data = select_vuz_pivot(filter_cond)
+        column_names = ["Код", "ВУЗ"]
+        doc.add_heading("Отчет из совдной таблицы по ВУЗам", level=1)
+    elif type_report == 2:  # 2 - По статусам
+        data = select_status_pivot(filter_cond)
+        column_names = ["Статус"]
+        doc.add_heading("Отчет из совдной таблицы по статусам", level=1)
+    elif type_report == 3:  # 3 - По регионам
+        data = select_region_pivot(filter_cond)
+        column_names = ["Регион"]
+    doc = Document()
+
+    doc.add_heading("Отчет из сводной таблицы", level=1)
+    doc.add_heading("Фильтры:", level=2)
+
+    if "vuz_name" in filter_cond:
+        doc.add_paragraph(f"ВУЗ: {filter_cond['vuz_name']}")
+    if "city" in filter_cond:
+        doc.add_paragraph(f"Город: {filter_cond['city']}")
+    if "federation_subject" in filter_cond:
+        doc.add_paragraph(f"Субъект федерации: {filter_cond['federation_subject']}")
+    if "region" in filter_cond:
+        doc.add_paragraph(f"Регион: {filter_cond['region']}")
+
+    # Настройка полей страницы
+    section = doc.sections[0]
+    section.top_margin = Inches(0.5)
+    section.bottom_margin = Inches(0.5)
+    section.left_margin = Inches(0.5)
+    section.right_margin = Inches(0.5)
+
+    # Заголовки столбцов
+
+    column_names.extend(
+        [
             "Кол-во гр",
             "Сумма гр",
             "Кол-во НТП",
@@ -208,52 +248,37 @@ def make_report(file_path):
             "Общее кол-во",
             "Общая сумма",
         ]
+    )
 
-        hdr_cells = table.rows[0].cells
-        for i, column in enumerate(column_names):
-            hdr_cells[i].text = column
-            for paragraph in hdr_cells[i].paragraphs:
-                run = paragraph.runs[0]
-                run.font.name = "Times New Roman"
-                run.font.size = Pt(10)  # размер шрифта 10
-            paragraph.paragraph_format.space_after = 0
+    table = doc.add_table(rows=1, cols=len(column_names))
+    hdr_cells = table.rows[0].cells
+    for i, column in enumerate(column_names):
+        hdr_cells[i].text = column
+        for paragraph in hdr_cells[i].paragraphs:
+            run = paragraph.runs[0]
+            run.font.name = "Times New Roman"
+            run.font.size = Pt(10)  # размер шрифта 10
+        paragraph.paragraph_format.space_after = 0
 
-        for row in rows:
-            row_cells = table.add_row().cells
-            row_cells[0].text = str(row.UniqueID)
-            row_cells[1].text = str(row.vuz_code)
-            row_cells[2].text = str(row.vuz_name)
-            row_cells[3].text = str(row.total_nir_grant_count)
-            row_cells[4].text = str(row.total_grant_value)
-            row_cells[5].text = str(row.total_nir_ntp_count)
-            row_cells[6].text = str(row.total_year_value_plan)
-            row_cells[7].text = str(row.total_nir_templan_count)
-            row_cells[8].text = str(row.total_value_plan)
-            row_cells[9].text = str(row.total_count)
-            row_cells[10].text = str(row.total_sum)
+    for row in data:
+        print(row.values())
 
-            # Установка шрифта для ячеек с данными
-            for cell in row_cells:
-                for paragraph in cell.paragraphs:
-                    run = paragraph.runs[0]
-                    run.font.name = "Times New Roman"
-                    run.font.size = Pt(10)
+    for row in data:
+        row_cells = table.add_row().cells
+        for i, key in enumerate(row.keys()):
+            row_cells[i].text = str(row[key])
 
-        # Итого
-        total_cells = table.add_row().cells
-        total_cells[0].text = "Итого"
-        for c in range(len(total)):
-            total_cells[c + 3].text = str(total[c])
-
-            for paragraph in total_cells[c + 3].paragraphs:
+        # Установка шрифта для ячеек с данными
+        for cell in row_cells:
+            for paragraph in cell.paragraphs:
                 run = paragraph.runs[0]
                 run.font.name = "Times New Roman"
                 run.font.size = Pt(10)
 
-        table.style = "Table Grid"
-        set_table_width(table)
+    table.style = "Table Grid"
+    set_table_width(table)
 
-        doc.save(file_path)
+    doc.save(file_path)
 
     print("Отчет успешно создан и сохранен.")
 

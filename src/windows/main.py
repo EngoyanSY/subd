@@ -3,7 +3,13 @@ from PyQt6.QtWidgets import QMainWindow
 from PyQt6.QtGui import QAction, QDesktopServices
 from PyQt6.QtCore import Qt, QUrl
 
-from src.windows.export import PivotExportDialog
+
+from src.windows.about import AboutDialog
+from src.windows.export import (
+    PivotExportDialog,
+    StatusExportDialog,
+    RegionExportDialog,
+)
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
 from core import Session
@@ -31,8 +37,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Анализ сводных показателей выполнения НИР - Вариант 10")
         self.showMaximized()
 
-        self.setup_sorting()
-
         self.setupFilters()
 
     def setup_actions(self):
@@ -44,10 +48,10 @@ class MainWindow(QMainWindow):
             self.open_export_subclass(PivotExportDialog)
         )
         self.ui.action_6.triggered.connect(
-            self.open_export_subclass(PivotExportDialog)
+            self.open_export_subclass(RegionExportDialog)
         )
         self.ui.action_7.triggered.connect(
-            self.open_export_subclass(PivotExportDialog)
+            self.open_export_subclass(StatusExportDialog)
         )
         self.ui.action_8.triggered.connect(
             self.open_export_subclass(PivotExportDialog)

@@ -5,6 +5,7 @@ from models import NTP
 class NTPTableModel(BaseTableModel):
     table_class = NTP
     _headers_by_ind = [
+        "",
         "Код НТП",
         "Номер НИР",
         "Код ВУЗа",

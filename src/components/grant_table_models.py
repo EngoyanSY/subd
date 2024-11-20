@@ -5,6 +5,7 @@ from models import Grant
 class GrantTableModel(BaseTableModel):
     table_class = Grant
     _headers_by_ind = [
+        "",
         "Код конкурса",
         "Код НИР",
         "Код ВУЗа",
