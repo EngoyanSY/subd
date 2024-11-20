@@ -28,7 +28,6 @@ from models import (
     select_vuz_pivot,
     select_status_pivot,
     select_region_pivot,
-    select_grnti_pivot,
 )
 
 
@@ -50,7 +49,7 @@ class BaseExportDialog(QDialog):
         }
         self.file_path = ""
         self.ui.setupUi(self)
-        self.setWindowTitle("Создание отчётов")
+        self.setWindowTitle("Предпросмотр отчёта")
         self.resize(1280, 720)
 
         # Поле для ввода имени файла
@@ -84,7 +83,7 @@ class BaseExportDialog(QDialog):
 
         # Лейбл и фильтрs
         filter_box = QVBoxLayout()
-        filter_box.addWidget(QLabel("Фильтры"))
+        filter_box.addWidget(QLabel("Фильтры:"))
         for ft in self.filter_text:
             filter_box.addWidget(ft)
 
@@ -177,6 +176,7 @@ class BaseExportDialog(QDialog):
                 file_path, type_report=self.report_type, filter_cond=self.filters
             )
             self.show_notification("Отчёт успешно сохранён!")
+            self.close()
         except Exception as e:
             self.show_notification(f"Ошибка при сохранении отчета: {e}")
 
