@@ -159,7 +159,10 @@ class BaseExportDialog(QDialog):
         print(self.report_type, self.filters)
         file_path = self.file_path.strip()
         if not file_path:
-            self.browse_file()
+            self.show_notification(
+                        "Не указан путь сохранения. Пожалуйста, выберите путь сохранения."
+                    )
+            return
         try:
             # Проверка доступности файла
             if os.path.exists(file_path):
