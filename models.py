@@ -21,9 +21,9 @@ from sqlalchemy import (
     or_,
     desc,
     asc,
-    text,
+    text
 )
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, aliased
 import pandas as pd
 
 from schema import (
@@ -482,6 +482,8 @@ def select_vuz_pivot(filter_cond=None):
             elif hasattr(GRNTI, fil):
                 conditions.append(getattr(GRNTI, fil).like(cond))
     with Session() as sess:
+        g1 = aliased(GRNTI)  
+        g2 = aliased(GRNTI)
         subquery_grant = (
             select(
                 VUZ.vuz_code,
@@ -494,16 +496,8 @@ def select_vuz_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
-                    )
-                ),
-            )
+            .outerjoin(g1, g1.codrub == func.substr(Grant.grnti_code, 1, 2))
+            .outerjoin(g2, g2.codrub == func.substr(Grant.grnti_code, func.instr(Grant.grnti_code, ';') + 1, 2))
             .where(and_(*conditions))
         )
 
@@ -519,16 +513,8 @@ def select_vuz_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
-                    )
-                ),
-            )
+            .outerjoin(g1, g1.codrub == func.substr(NTP.grnti_code, 1, 2))
+            .outerjoin(g2, g2.codrub == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ';') + 1, 2))
             .where(and_(*conditions))
         )
 
@@ -544,16 +530,8 @@ def select_vuz_pivot(filter_cond=None):
                 func.sum(Templan.value_plan).label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
-                    )
-                ),
-            )
+            .outerjoin(g1, g1.codrub == func.substr(Templan.grnti_code, 1, 2))
+            .outerjoin(g2, g2.codrub == func.substr(Templan.grnti_code, func.instr(Templan.grnti_code, ';') + 1, 2))
             .where(and_(*conditions))
         )
 
@@ -716,6 +694,8 @@ def select_grnti_pivot(filter_cond=None):
                 conditions.append(getattr(GRNTI, fil).like(cond))
 
     with Session() as sess:
+        g1 = aliased(GRNTI)  
+        g2 = aliased(GRNTI)
         subquery_grant = (
             select(
                 GRNTI.codrub,
@@ -728,16 +708,8 @@ def select_grnti_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
-                    )
-                ),
-            )
+            .outerjoin(g1, g1.codrub == func.substr(Grant.grnti_code, 1, 2))
+            .outerjoin(g2, g2.codrub == func.substr(Grant.grnti_code, func.instr(Grant.grnti_code, ';') + 1, 2))
             .where(and_(*conditions))
             .group_by(GRNTI.codrub, GRNTI.rubrika)
         )
@@ -754,16 +726,8 @@ def select_grnti_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
-                    )
-                ),
-            )
+            .outerjoin(g1, g1.codrub == func.substr(NTP.grnti_code, 1, 2))
+            .outerjoin(g2, g2.codrub == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ';') + 1, 2))
             .where(and_(*conditions))
             .group_by(GRNTI.codrub, GRNTI.rubrika)
         )
@@ -780,16 +744,8 @@ def select_grnti_pivot(filter_cond=None):
                 func.sum(Templan.value_plan).label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
-                    )
-                ),
-            )
+            .outerjoin(g1, g1.codrub == func.substr(Templan.grnti_code, 1, 2))
+            .outerjoin(g2, g2.codrub == func.substr(Templan.grnti_code, func.instr(Templan.grnti_code, ';') + 1, 2))
             .where(and_(*conditions))
             .group_by(GRNTI.codrub, GRNTI.rubrika)
         )
