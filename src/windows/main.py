@@ -1,7 +1,8 @@
 from PyQt6 import QtSql
 from PyQt6.QtWidgets import QMainWindow
-from PyQt6.QtGui import QAction
-from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction, QDesktopServices
+from PyQt6.QtCore import Qt, QUrl
+
 
 from src.windows.about import AboutDialog
 from src.windows.export import (
@@ -40,7 +41,7 @@ class MainWindow(QMainWindow):
 
     def setup_actions(self):
         about_action = QAction("Документация", self)
-        about_action.triggered.connect(self.open_about)
+        about_action.triggered.connect(self.open_documentation)
         self.ui.about.addAction(about_action)
 
         self.ui.action_5.triggered.connect(
@@ -58,6 +59,10 @@ class MainWindow(QMainWindow):
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
+
+    def open_documentation(self):
+        file_path = "Doc.pdf"
+        QDesktopServices.openUrl(QUrl.fromLocalFile(file_path))
 
     def connect_database(self):
         db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
@@ -221,10 +226,6 @@ class MainWindow(QMainWindow):
 
         header.setSortIndicator(self.current_sort_column, self.current_sort_order)
         header.setSortIndicatorShown(True)
-
-    def open_about(self):
-        self.about_window = AboutDialog()
-        self.about_window.show()
 
     def open_export_subclass(self, export_window_class):
         def open_export():
