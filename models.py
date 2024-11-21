@@ -23,7 +23,7 @@ from sqlalchemy import (
     asc,
     text,
 )
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, aliased
 import pandas as pd
 
 from schema import (
@@ -475,12 +475,12 @@ def select_region_pivot(filter_cond=None):
 
 def select_vuz_pivot(filter_cond=None):
     conditions = []
+    g1 = aliased(GRNTI)
+    g2 = aliased(GRNTI)
     if filter_cond is not None:
         for fil, cond in filter_cond.items():
             if hasattr(VUZ, fil):
                 conditions.append(getattr(VUZ, fil).like(cond))
-            elif hasattr(GRNTI, fil):
-                conditions.append(getattr(GRNTI, fil).like(cond))
     with Session() as sess:
         subquery_grant = (
             select(
@@ -494,17 +494,15 @@ def select_vuz_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
-                    )
+            .outerjoin(g1, g1.codrub == func.substr(Grant.grnti_code, 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
                 ),
             )
-            .where(and_(*conditions))
+            .where(*conditions)
         )
 
         subquery_ntp = (
@@ -519,17 +517,13 @@ def select_vuz_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
-                    )
-                ),
+            .outerjoin(g1, g1.codrub == func.substr(NTP.grnti_code, 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2),
             )
-            .where(and_(*conditions))
+            .where(*conditions)
         )
 
         subquery_templan = (
@@ -544,17 +538,15 @@ def select_vuz_pivot(filter_cond=None):
                 func.sum(Templan.value_plan).label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
-                    )
+            .outerjoin(g1, g1.codrub == func.substr(Templan.grnti_code, 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
                 ),
             )
-            .where(and_(*conditions))
+            .where(*conditions)
         )
 
         subquery_grant = subquery_grant.group_by(VUZ.vuz_code, VUZ.vuz_name)
@@ -580,8 +572,9 @@ def select_vuz_pivot(filter_cond=None):
             + func.sum(combined.c.total_value_plan).label("total_sum"),
         ).group_by(combined.c.vuz_code, combined.c.vuz_name)
 
-        if "codrub" in filter_cond:
-            final_query = final_query.order_by(text("8 desc"))
+        if filter_cond is not None:
+            if "codrub" in filter_cond:
+                final_query = final_query.order_by(text("9 desc"))
 
         result = sess.execute(final_query).all()
 
@@ -708,16 +701,19 @@ def select_status_pivot(filter_cond=None):
 
 def select_grnti_pivot(filter_cond=None):
     conditions = []
+    g1 = aliased(GRNTI)
+    g2 = aliased(GRNTI)
     if filter_cond is not None:
         for fil, cond in filter_cond.items():
             if hasattr(VUZ, fil):
                 conditions.append(getattr(VUZ, fil).like(cond))
-
+            elif hasattr(GRNTI, fil):
+                conditions.append(getattr(g1, fil).like(cond))
     with Session() as sess:
         subquery_grant = (
             select(
-                GRNTI.codrub,
-                GRNTI.rubrika,
+                g1.codrub,
+                g1.rubrika,
                 func.count(Grant.nir_code).label("nir_grant_count"),
                 func.sum(Grant.grant_value).label("total_grant_value"),
                 literal_column("0").label("nir_ntp_count"),
@@ -726,24 +722,22 @@ def select_grnti_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
-                    )
+            .outerjoin(g1, g1.codrub == func.substr(Grant.grnti_code, 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
                 ),
             )
             .where(and_(*conditions))
-            .group_by(GRNTI.codrub, GRNTI.rubrika)
+            .group_by(g1.codrub, g1.rubrika)
         )
 
         subquery_ntp = (
             select(
-                GRNTI.codrub,
-                GRNTI.rubrika,
+                g1.codrub,
+                g1.rubrika,
                 literal_column("0").label("nir_grant_count"),
                 literal_column("0").label("total_grant_value"),
                 func.count(NTP.nir_number).label("nir_ntp_count"),
@@ -752,24 +746,20 @@ def select_grnti_pivot(filter_cond=None):
                 literal_column("0").label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
-                    )
-                ),
+            .outerjoin(g1, g1.codrub == func.substr(NTP.grnti_code, 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2),
             )
             .where(and_(*conditions))
-            .group_by(GRNTI.codrub, GRNTI.rubrika)
+            .group_by(g1.codrub, g1.rubrika)
         )
 
         subquery_templan = (
             select(
-                GRNTI.codrub,
-                GRNTI.rubrika,
+                g1.codrub,
+                g1.rubrika,
                 literal_column("0").label("nir_grant_count"),
                 literal_column("0").label("total_grant_value"),
                 literal_column("0").label("nir_ntp_count"),
@@ -778,18 +768,16 @@ def select_grnti_pivot(filter_cond=None):
                 func.sum(Templan.value_plan).label("total_value_plan"),
             )
             .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
-            .join(
-                GRNTI,
-                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
-                | (
-                    GRNTI.codrub
-                    == func.substr(
-                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
-                    )
+            .outerjoin(g1, g1.codrub == func.substr(Templan.grnti_code, 1, 2))
+            .outerjoin(
+                g2,
+                g2.codrub
+                == func.substr(
+                    Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
                 ),
             )
             .where(and_(*conditions))
-            .group_by(GRNTI.codrub, GRNTI.rubrika)
+            .group_by(g1.codrub, g1.rubrika)
         )
 
         combined = union_all(subquery_grant, subquery_ntp, subquery_templan)
@@ -810,7 +798,6 @@ def select_grnti_pivot(filter_cond=None):
             + func.sum(combined.c.total_year_value_plan)
             + func.sum(combined.c.total_value_plan).label("total_sum"),
         ).group_by(combined.c.codrub, combined.c.rubrika)
-
         result = sess.execute(final_query).all()
 
         # refact
@@ -861,3 +848,148 @@ def total(result):
         ]
     )
     return totals
+
+
+def select_most_pivot(filter_cond=None):
+    conditions = []
+    if filter_cond is not None:
+        for fil, cond in filter_cond.items():
+            if hasattr(VUZ, fil):
+                conditions.append(getattr(VUZ, fil).like(cond))
+            elif hasattr(GRNTI, fil):
+                conditions.append(getattr(GRNTI, fil).like(cond))
+    with Session() as sess:
+        subquery_grant = (
+            select(
+                VUZ.vuz_code,
+                VUZ.vuz_name,
+                func.count(Grant.nir_code).label("nir_grant_count"),
+                func.sum(Grant.grant_value).label("total_grant_value"),
+                literal_column("0").label("nir_ntp_count"),
+                literal_column("0").label("total_year_value_plan"),
+                literal_column("0").label("nir_templan_count"),
+                literal_column("0").label("total_value_plan"),
+            )
+            .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
+            .join(
+                GRNTI,
+                (GRNTI.codrub == func.substr(Grant.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        Grant.grnti_code, func.instr(Grant.grnti_code, ";") + 1, 2
+                    )
+                ),
+            )
+            .where(and_(*conditions))
+        )
+
+        subquery_ntp = (
+            select(
+                VUZ.vuz_code,
+                VUZ.vuz_name,
+                literal_column("0").label("nir_grant_count"),
+                literal_column("0").label("total_grant_value"),
+                func.count(NTP.nir_number).label("nir_ntp_count"),
+                func.sum(NTP.year_value_plan).label("total_year_value_plan"),
+                literal_column("0").label("nir_templan_count"),
+                literal_column("0").label("total_value_plan"),
+            )
+            .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
+            .join(
+                GRNTI,
+                (GRNTI.codrub == func.substr(NTP.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        NTP.grnti_code, func.instr(NTP.grnti_code, ";") + 1, 2
+                    )
+                ),
+            )
+            .where(and_(*conditions))
+        )
+
+        subquery_templan = (
+            select(
+                VUZ.vuz_code,
+                VUZ.vuz_name,
+                literal_column("0").label("nir_grant_count"),
+                literal_column("0").label("total_grant_value"),
+                literal_column("0").label("nir_ntp_count"),
+                literal_column("0").label("total_year_value_plan"),
+                func.count(Templan.nir_reg_number).label("nir_templan_count"),
+                func.sum(Templan.value_plan).label("total_value_plan"),
+            )
+            .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
+            .join(
+                GRNTI,
+                (GRNTI.codrub == func.substr(Templan.grnti_code, 1, 2))
+                | (
+                    GRNTI.codrub
+                    == func.substr(
+                        Templan.grnti_code, func.instr(Templan.grnti_code, ";") + 1, 2
+                    )
+                ),
+            )
+            .where(and_(*conditions))
+        )
+
+        subquery_grant = subquery_grant.group_by(VUZ.vuz_code, VUZ.vuz_name)
+        subquery_ntp = subquery_ntp.group_by(VUZ.vuz_code, VUZ.vuz_name)
+        subquery_templan = subquery_templan.group_by(VUZ.vuz_code, VUZ.vuz_name)
+
+        combined = union_all(subquery_grant, subquery_ntp, subquery_templan)
+
+        final_query = select(
+            combined.c.vuz_code,
+            combined.c.vuz_name,
+            func.sum(combined.c.nir_grant_count).label("total_nir_grant_count"),
+            func.sum(combined.c.total_grant_value).label("total_grant_value"),
+            func.sum(combined.c.nir_ntp_count).label("total_nir_ntp_count"),
+            func.sum(combined.c.total_year_value_plan).label("total_year_value_plan"),
+            func.sum(combined.c.nir_templan_count).label("total_nir_templan_count"),
+            func.sum(combined.c.total_value_plan).label("total_value_plan"),
+            func.sum(combined.c.nir_grant_count)
+            + func.sum(combined.c.nir_ntp_count)
+            + func.sum(combined.c.nir_templan_count).label("total_count"),
+            func.sum(combined.c.total_grant_value)
+            + func.sum(combined.c.total_year_value_plan)
+            + func.sum(combined.c.total_value_plan).label("total_sum"),
+        ).group_by(combined.c.vuz_code, combined.c.vuz_name)
+
+        if "codrub" in filter_cond:
+            final_query = final_query.order_by(text("9 desc"))
+
+        result = sess.execute(final_query).all()
+
+        # refact
+        totals = tuple(
+            [
+                "Итого",
+                "",
+                sum(item[-8] for item in result),
+                sum(item[-7] for item in result),
+                sum(item[-6] for item in result),
+                sum(item[-5] for item in result),
+                sum(item[-4] for item in result),
+                sum(item[-3] for item in result),
+                sum(item[-2] for item in result),
+                sum(item[-1] for item in result),
+            ]
+        )
+        result.append(totals)
+
+        fields = [
+            "vuz_code",
+            "vuz_name",
+            "total_nir_grant_count",
+            "total_grant_value",
+            "total_nir_ntp_count",
+            "total_year_value_plan",
+            "total_nir_templan_count",
+            "total_value_plan",
+            "total_count",
+            "total_sum",
+        ]
+        result_dto = [dict(zip(fields, item)) for item in result]
+        return result_dto
