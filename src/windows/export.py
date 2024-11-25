@@ -227,35 +227,30 @@ class MostExportDialog(BaseExportDialog):
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
-    print(type_report, filter_cond)
+    if "grnti_code" in filter_cond:
+        filter_report = filter_cond
+        filter_report["codrub"] = filter_cond["grnti_code"]
     doc = Document()
     if type_report == 1:  # 1 - По вузам
-        data = select_vuz_pivot(filter_cond)
+        data = select_vuz_pivot(filter_report)
         column_names = ["Код", "ВУЗ"]
-        doc.add_heading("Отчет из совдной таблицы по ВУЗам", level=1)
+        doc.add_heading("Распределение НИР по вузам", level=1)
     elif type_report == 2:  # 2 - По статусам
-        data = select_status_pivot(filter_cond)
+        data = select_status_pivot(filter_report)
         column_names = ["Статус"]
-        doc.add_heading("Отчет из совдной таблицы по статусам", level=1)
+        doc.add_heading("Распределение НИР по статусам", level=1)
     elif type_report == 3:  # 3 - По регионам
-        data = select_region_pivot(filter_cond)
+        data = select_region_pivot(filter_report)
         column_names = ["Регион"]
-        doc.add_heading("Отчет из совдной таблицы по регионам", level=1)
+        doc.add_heading("Распределение НИР по регонам", level=1)
     elif type_report == 4:  # 4 - По ГРНТИ
-        if "grnti_code" in filter_cond:
-            filter_cond["codrub"] = filter_cond["grnti_code"]
-            data = select_grnti_pivot(filter_cond)
-            del filter_cond["codrub"]
-        else:
-            data = select_grnti_pivot(filter_cond)
+        data = select_grnti_pivot(filter_report)
         column_names = ["Код", "Рубрика"]
-        doc.add_heading("Отчет из совдной таблицы по ГРНТИ", level=1)
+        doc.add_heading("Распределение НИР по рубрикам", level=1)
     elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
-        filter_cond["codrub"] = filter_cond["grnti_code"]
-        data = select_most_pivot(filter_cond)
-        del filter_cond["codrub"]
+        data = select_most_pivot(filter_report)
         column_names = ["Код", "ВУЗ"]
-        doc.add_heading("Отчет из совдной таблицы по кол-ву НИР по рубрике", level=1)
+        doc.add_heading("ВУЗы с НИР по рубрике", level=1)
 
     if not (filter_cond == {}):
         doc.add_heading("Фильтры:", level=2)

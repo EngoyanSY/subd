@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file 'ui/qt/mainWindow.ui'
+# Form implementation generated from reading ui file '.\ui\qt\mainWindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -229,8 +229,8 @@ class Ui_MainWindow(object):
         self.action.setText(_translate("MainWindow", "Отчёт"))
         self.action_2.setText(_translate("MainWindow", "Отчёт"))
         self.action_5.setText(_translate("MainWindow", "Распределение НИР по вузам"))
-        self.action_6.setText(_translate("MainWindow", "Распределение НИР по федеральным округам"))
+        self.action_6.setText(_translate("MainWindow", "Распределение НИР по регонам"))
         self.action_7.setText(_translate("MainWindow", "Распределение НИР по статусам"))
-        self.action_8.setText(_translate("MainWindow", "Распределение НИР по характеру"))
+        self.action_8.setText(_translate("MainWindow", "Распределение НИР по рубрикам"))
         self.action_9.setText(_translate("MainWindow", "Сводка"))
-        self.action_3.setText(_translate("MainWindow", "Распределение НИР по кол-ву работ рубрики ГРНТИ"))
+        self.action_3.setText(_translate("MainWindow", "ВУЗы с НИР по рубрике"))

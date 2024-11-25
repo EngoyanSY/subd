@@ -65,7 +65,7 @@ class BaseTableModel(QAbstractTableModel):
 
     def sort(self, column, order):
         reverse = order == Qt.SortOrder.DescendingOrder
-        self._filtered_data.sort(key=lambda x: x[column], reverse=reverse)
+        self._filtered_data.sort(key=lambda x: x[column] or "", reverse=reverse)
         self.layoutChanged.emit()
 
 
