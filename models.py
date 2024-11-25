@@ -1001,6 +1001,7 @@ def select_most_pivot(filter_cond=None):
         result_dto = [dict(zip(fields, item)) for item in result]
         return result_dto
 
+
 def select_character_pivot(filter_cond=None):
     conditions = []
     if filter_cond is not None:

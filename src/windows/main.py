@@ -8,7 +8,6 @@ from src.windows.export import (
     StatusExportDialog,
     RegionExportDialog,
     GRNTIExportDialog,
-    CharacterExportDialog,
     MostExportDialog,
 )
 from ui.py.main_window import Ui_MainWindow
@@ -59,10 +58,8 @@ class MainWindow(QMainWindow):
         self.ui.action_8.triggered.connect(
             self.open_export_subclass(GRNTIExportDialog)
         )
-        #TODO: CharacterExportDialog
-        self.ui.action_3.triggered.connect(
-            self.open_export_subclass(MostExportDialog)
-            )
+        # TODO: CharacterExportDialog
+        self.ui.action_3.triggered.connect(self.open_export_subclass(MostExportDialog))
 
         self.ui.set_filter.clicked.connect(self.set_filters)
         self.ui.clear_filter.clicked.connect(self.clear_filters)
