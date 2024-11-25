@@ -9,6 +9,7 @@ from models import (
     select_status_pivot,
     select_region_pivot,
     select_grnti_pivot,
+    select_character_pivot,
     select_most_pivot,
 )
 
@@ -94,6 +95,9 @@ class MakeModel(QAbstractTableModel):
         elif model == "grnti":
             data = select_grnti_pivot(filter_cond)
             self._data = [list(row.values()) for row in data]
+        elif model == "character":
+            data = select_character_pivot(filter_cond)
+            self.data = [list(row.values()) for row in data]
         elif model == "most":
             if "grnti_code" not in filter_cond:
                 filter_cond["codrub"] = "00"

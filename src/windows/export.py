@@ -30,6 +30,7 @@ from models import (
     select_status_pivot,
     select_region_pivot,
     select_grnti_pivot,
+    select_character_pivot,
     select_most_pivot,
 )
 
@@ -220,10 +221,16 @@ class GRNTIExportDialog(BaseExportDialog):
     report_type = 4
 
 
+class CharacterExportDialog(BaseExportDialog):
+    table_model_class = MostModel
+    report = "character"
+    report_type = 5
+
+
 class MostExportDialog(BaseExportDialog):
     table_model_class = MostModel
     report = "most"
-    report_type = 5
+    report_type = 6
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
@@ -247,7 +254,11 @@ def make_report(file_path, type_report=1, filter_cond={}):
         data = select_grnti_pivot(filter_report)
         column_names = ["Код", "Рубрика"]
         doc.add_heading("Распределение НИР по рубрикам", level=1)
-    elif type_report == 5:  # 5 - По кол-ву НИР по рубрике
+    elif type_report == 5:  # 5 - По характеру
+        data = select_character_pivot(filter_report)
+        column_names = ["Характер"]
+        doc.add_heading("Распределение НИР по характеру", level=1)
+    elif type_report == 6:  # 6 - По кол-ву НИР по рубрике
         data = select_most_pivot(filter_report)
         column_names = ["Код", "ВУЗ"]
         doc.add_heading("ВУЗы с НИР по рубрике", level=1)
