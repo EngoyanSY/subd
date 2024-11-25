@@ -95,7 +95,10 @@ class MakeModel(QAbstractTableModel):
             data = select_grnti_pivot(filter_cond)
             self._data = [list(row.values()) for row in data]
         elif model == "most":
-            filter_cond["codrub"] = filter_cond["grnti_code"]
+            if "grnti_code" not in filter_cond:
+                filter_cond["codrub"] = "00"
+            else:
+                filter_cond["codrub"] = filter_cond["grnti_code"]
             data = select_most_pivot(filter_cond)
             del filter_cond["codrub"]
             self._data = [list(row.values()) for row in data]

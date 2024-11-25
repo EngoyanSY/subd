@@ -97,6 +97,11 @@ class MainWindow(QMainWindow):
 
     def clear_filters(self):
         self.filter_cond = {}
+        self.ui.grnti_code.clear()
+        # ПОТОМКИ !!!! НЕ ПЫТАЙТЕСЬ ПОНЯТЬ БОГА
+        # ПРИМИТЕ ЕГО В СЕБЕ И  СМИРИТЕСЬ
+        # ИНОГДА ОБСТОЯТЕЛЬСТВА  ВЫШЕ НАС И ВЫШЕ КВАС
+        # абоба
         self.setupFilters(self.filter_cond)
 
     def setup_table_models(self):

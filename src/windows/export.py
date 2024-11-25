@@ -73,8 +73,9 @@ class BaseExportDialog(QDialog):
         self.table_model = self.table_model_class(
             filter_cond=filter_cond, model=self.report
         )
-        self.preview_area.setModel(self.table_model)
 
+        self.preview_area.setModel(self.table_model)
+        self.preview_area.resizeColumnsToContents()
         # Основной макет
         main_layout = QVBoxLayout()
 
