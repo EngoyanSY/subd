@@ -17,6 +17,7 @@ from sqlalchemy import (
     func,
     union_all,
     literal_column,
+    literal,
     and_,
     or_,
     desc,
@@ -998,4 +999,91 @@ def select_most_pivot(filter_cond=None):
             "total_sum",
         ]
         result_dto = [dict(zip(fields, item)) for item in result]
+        return result_dto
+
+def select_character_pivot(filter_cond=None):
+    conditions = []
+    if filter_cond is not None:
+        for fil, cond in filter_cond.items():
+            if hasattr(VUZ, fil):
+                conditions.append(getattr(VUZ, fil).like(cond))
+    with Session() as sess:
+        subquery_grant = (
+            select(
+                literal("П").label("nir_type"),
+                func.count(Grant.nir_code).label("nir_grant_count"),
+                func.sum(Grant.grant_value).label("total_grant_value"),
+                literal_column("0").label("nir_ntp_count"),
+                literal_column("0").label("total_year_value_plan"),
+                literal_column("0").label("nir_templan_count"),
+                literal_column("0").label("total_value_plan"),
+            )
+            .join(VUZ, VUZ.vuz_code == Grant.vuz_code)
+            .where(and_(*conditions))
+            .group_by(literal("П"))
+        )
+
+        subquery_ntp = (
+            select(
+                NTP.nir_type,
+                literal_column("0").label("nir_grant_count"),
+                literal_column("0").label("total_grant_value"),
+                func.count(NTP.nir_number).label("nir_ntp_count"),
+                func.sum(NTP.year_value_plan).label("total_year_value_plan"),
+                literal_column("0").label("nir_templan_count"),
+                literal_column("0").label("total_value_plan"),
+            )
+            .join(VUZ, VUZ.vuz_code == NTP.vuz_code)
+            .where(and_(*conditions))
+            .group_by(NTP.nir_type)
+        )
+
+        subquery_templan = (
+            select(
+                Templan.nir_type,
+                literal_column("0").label("nir_grant_count"),
+                literal_column("0").label("total_grant_value"),
+                literal_column("0").label("nir_ntp_count"),
+                literal_column("0").label("total_year_value_plan"),
+                func.count(Templan.nir_reg_number).label("nir_templan_count"),
+                func.sum(Templan.value_plan).label("total_value_plan"),
+            )
+            .join(VUZ, VUZ.vuz_code == Templan.vuz_code)
+            .where(and_(*conditions))
+            .group_by(Templan.nir_type)
+        )
+
+        combined = union_all(subquery_grant, subquery_ntp, subquery_templan)
+
+        final_query = select(
+            combined.c.nir_type,
+            func.sum(combined.c.nir_grant_count).label("total_nir_grant_count"),
+            func.sum(combined.c.total_grant_value).label("total_grant_value"),
+            func.sum(combined.c.nir_ntp_count).label("total_nir_ntp_count"),
+            func.sum(combined.c.total_year_value_plan).label("total_year_value_plan"),
+            func.sum(combined.c.nir_templan_count).label("total_nir_templan_count"),
+            func.sum(combined.c.total_value_plan).label("total_value_plan"),
+            func.sum(combined.c.nir_grant_count)
+            + func.sum(combined.c.nir_ntp_count)
+            + func.sum(combined.c.nir_templan_count).label("total_count"),
+            func.sum(combined.c.total_grant_value)
+            + func.sum(combined.c.total_year_value_plan)
+            + func.sum(combined.c.total_value_plan).label("total_sum"),
+        ).group_by(combined.c.nir_type)
+
+        result = sess.execute(final_query).all()
+        result.append(total(result))
+        fields = [
+            "nir_type",
+            "total_nir_grant_count",
+            "total_grant_value",
+            "total_nir_ntp_count",
+            "total_year_value_plan",
+            "total_nir_templan_count",
+            "total_value_plan",
+            "total_count",
+            "total_sum",
+        ]
+        result_dto = [dict(zip(fields, item)) for item in result]
+
         return result_dto
