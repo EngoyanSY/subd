@@ -58,6 +58,7 @@ class MainWindow(QMainWindow):
         self.ui.action_8.triggered.connect(
             self.open_export_subclass(GRNTIExportDialog)
         )
+        # TODO: CharacterExportDialog
         self.ui.action_3.triggered.connect(self.open_export_subclass(MostExportDialog))
 
         self.ui.set_filter.clicked.connect(self.set_filters)
