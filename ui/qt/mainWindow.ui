@@ -322,6 +322,7 @@
      <addaction name="action_6"/>
      <addaction name="action_7"/>
      <addaction name="action_8"/>
+     <addaction name="action_4"/>
      <addaction name="action_3"/>
     </widget>
     <addaction name="menu"/>
@@ -346,7 +347,7 @@
   </action>
   <action name="action_6">
    <property name="text">
-    <string>Распределение НИР по регонам</string>
+    <string>Распределение НИР по регионам</string>
    </property>
   </action>
   <action name="action_7">
@@ -367,6 +368,11 @@
   <action name="action_3">
    <property name="text">
     <string>ВУЗы с НИР по рубрике</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="text">
+    <string>Распределение НИР по характеру</string>
    </property>
   </action>
  </widget>
