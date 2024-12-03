@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '.\ui\qt\mainWindow.ui'
+# Form implementation generated from reading ui file 'ui/qt/mainWindow.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
 #
@@ -189,10 +189,13 @@ class Ui_MainWindow(object):
         self.action_9.setObjectName("action_9")
         self.action_3 = QtGui.QAction(parent=MainWindow)
         self.action_3.setObjectName("action_3")
+        self.action_4 = QtGui.QAction(parent=MainWindow)
+        self.action_4.setObjectName("action_4")
         self.menu.addAction(self.action_5)
         self.menu.addAction(self.action_6)
         self.menu.addAction(self.action_7)
         self.menu.addAction(self.action_8)
+        self.menu.addAction(self.action_4)
         self.menu.addAction(self.action_3)
         self.export_2.addAction(self.menu.menuAction())
         self.menubar.addAction(self.export_2.menuAction())
@@ -229,8 +232,9 @@ class Ui_MainWindow(object):
         self.action.setText(_translate("MainWindow", "Отчёт"))
         self.action_2.setText(_translate("MainWindow", "Отчёт"))
         self.action_5.setText(_translate("MainWindow", "Распределение НИР по вузам"))
-        self.action_6.setText(_translate("MainWindow", "Распределение НИР по регонам"))
+        self.action_6.setText(_translate("MainWindow", "Распределение НИР по регионам"))
         self.action_7.setText(_translate("MainWindow", "Распределение НИР по статусам"))
         self.action_8.setText(_translate("MainWindow", "Распределение НИР по рубрикам"))
         self.action_9.setText(_translate("MainWindow", "Сводка"))
         self.action_3.setText(_translate("MainWindow", "ВУЗы с НИР по рубрике"))
+        self.action_4.setText(_translate("MainWindow", "Распределение НИР по характеру"))
