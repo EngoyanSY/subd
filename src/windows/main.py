@@ -9,6 +9,7 @@ from src.windows.export import (
     RegionExportDialog,
     GRNTIExportDialog,
     MostExportDialog,
+    CharacterExportDialog,
 )
 from ui.py.main_window import Ui_MainWindow
 from models import VUZ
@@ -58,7 +59,9 @@ class MainWindow(QMainWindow):
         self.ui.action_8.triggered.connect(
             self.open_export_subclass(GRNTIExportDialog)
         )
-        # TODO: CharacterExportDialog
+        self.ui.action_4.triggered.connect(
+            self.open_export_subclass(CharacterExportDialog)
+        )
         self.ui.action_3.triggered.connect(self.open_export_subclass(MostExportDialog))
 
         self.ui.set_filter.clicked.connect(self.set_filters)

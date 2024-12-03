@@ -21,6 +21,7 @@ from src.base_table_model import (
     StatusModel,
     RegionModel,
     GRNTIModel,
+    CharacterModel,
     MostModel,
 )
 import os
@@ -222,7 +223,7 @@ class GRNTIExportDialog(BaseExportDialog):
 
 
 class CharacterExportDialog(BaseExportDialog):
-    table_model_class = MostModel
+    table_model_class = CharacterModel
     report = "character"
     report_type = 5
 
@@ -234,8 +235,8 @@ class MostExportDialog(BaseExportDialog):
 
 
 def make_report(file_path, type_report=1, filter_cond={}):
+    filter_report = filter_cond
     if "grnti_code" in filter_cond:
-        filter_report = filter_cond
         filter_report["codrub"] = filter_cond["grnti_code"]
     doc = Document()
     if type_report == 1:  # 1 - По вузам
