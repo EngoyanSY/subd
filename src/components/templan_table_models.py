@@ -1,3 +1,5 @@
+import re
+
 from src.base_table_model import BaseTableModel
 from models import Templan
 
@@ -37,3 +39,28 @@ class TemplanTableModel(BaseTableModel):
         "nir_reg_number": 6,  #
         "grnti_code": 2,  #
     }
+
+    def setFilter(self, filters={}):
+        self._filtered_data = self._data.copy()
+        for key, value in filters.items():
+            index = self._index_by_col[key]
+            if isinstance(value, str):
+                if key == "grnti_code":
+                    regex = r"(^|;){}[\S]*".format(value)
+                    print(regex)
+                    self._filtered_data = [
+                        row
+                        for row in self._filtered_data
+                        if len(re.findall(regex, str(row[index + 1]))) > 0
+                    ]
+                else:
+                    self._filtered_data = [
+                        row
+                        for row in self._filtered_data
+                        if str(row[index + 1]).startswith(value)
+                    ]
+            else:
+                self._filtered_data = [
+                    row for row in self._filtered_data if row[index + 1] in value
+                ]
+            self.layoutChanged.emit()
